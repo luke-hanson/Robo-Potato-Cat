@@ -1,0 +1,29 @@
+Assuming robo-potato-cat uses the following steps to complete our task...
+
+	1) Download SCS and run one of the example tutorials 
+	2) Make a simple one joint robot (maybe a pendulum) 
+	3) Make a controller for that robot (maybe hold the pendulum inverted) 
+	4) Make a multi-joint robot (maybe a two joint robot arm) 
+	5) Make a controller for that 
+	6) Make a JD robot 
+	7) Make a controller for that
+		a) stand in place 
+		b) move arms 
+		c) change height (squat) 
+		d) basic walk 
+	8) Skin the robot to look like JD
+
+our proposal is to complete the above steps within the following schedule...
+
+	1) completed by 1/30
+	2) completed by 2/6
+	3) by 2/13
+	4) by 2/27
+	5) 3/13
+	6) 3/27
+	7) 4/10
+	8) 4/24
+	
+Steps 7-a, -b, -c, -d will be completed separately by individual members of the team. Memeber assignments for each controller to be announced.
+
+robo-potato-cat's progress will be stored on our github account - https://github.com/luke-hanson/Robo-Potato-Cat
