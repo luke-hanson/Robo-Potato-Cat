@@ -1,0 +1,28 @@
+apply plugin: 'java'  
+
+sourceCompatibility = 1.5  
+
+repositories {
+    maven {
+        url  "http://dl.bintray.com/ihmcrobotics/maven-release" // IHMC Code releases
+    }
+
+    maven {
+        url  "http://dl.bintray.com/ihmcrobotics/maven-vendor" // Third-party libraries that we have vendored for various reasons
+    }
+
+    /*
+     *  Maven repos hosted at IHMC for some legacy vendored
+     *  dependencies we have not been able to vendor on Bintray yet.
+     *  This will be going away eventually.
+     */
+    maven {
+        url "https://bengal.ihmc.us/nexus/content/repositories/thirdparty/"
+    }
+
+    jcenter() // One of the central Maven repos. You can also use mavenCentral() instead or in addition to.
+}
+
+dependencies {
+    compile 'us.ihmc:SimulationConstructionSet:0.7.10' 
+}
