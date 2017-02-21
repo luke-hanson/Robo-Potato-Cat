@@ -5,5 +5,5 @@ In this project we will be creating a program to simulate a JD EZ Robot. We will
 -1/19/2017-
   Setting up GitHub accounts and project.
   
-  Plans for next week:
-    Get source code for the project and install for everyone.
+-2/21/2017-
+  We have a two joint "arm" with controllers. Now we will set up the skeletal structure of the robot.
