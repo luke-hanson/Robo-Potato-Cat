@@ -20,7 +20,7 @@ public class ArmSimulation
 
         sim = new SimulationConstructionSet(robot, parameters);
         sim.setDT(DT, 20);
-        sim.setGroundVisible(true);
+        sim.setGroundVisible(false);
         sim.setCameraPosition(0, -9.0, 0.6);
         sim.setCameraFix(0.0, 0.0, 0.70);
 
