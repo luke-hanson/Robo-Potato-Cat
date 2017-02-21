@@ -53,17 +53,17 @@ public class ArmRobot extends Robot
         super("pendulum");
 
         // b. Add a joint to the robot
-        PinJoint fulcrumPinJoint = new PinJoint("FulcrumPin", new Vector3d(0.0, 0.0, 1.0), this, Axis.Y);
+        PinJoint fulcrumPinJoint = new PinJoint("FulcrumPin", new Vector3d(0.0, 0.0, 1.25), this, Axis.Y);
         PinJoint secondPinJoint = new PinJoint("SecondPin", new Vector3d(0.0, 0.0, -ROD_LENGTH), this, Axis.Y);
 
         fulcrumPinJoint.setInitialState(fulcrumInitialPositionRadians, fulcrumInitialVelocity);
-        Link secondLink = pendulumLink();
+        Link secondLink = secondLink();
         fulcrumPinJoint.setLink(secondLink);// pendulumLink() method defined next.
         fulcrumPinJoint.setDamping(0.3);
 
         secondPinJoint.setInitialState(-fulcrumInitialPositionRadians, fulcrumInitialVelocity);
         secondPinJoint.setLink(pendulumLink());// pendulumLink() method defined next.
-        //secondPinJoint.setDamping(0.3);
+        secondPinJoint.setDamping(0.3);
 
         q_fulcrum = fulcrumPinJoint.getQ();
         qd_fulcrum = fulcrumPinJoint.getQD();
@@ -88,6 +88,10 @@ public class ArmRobot extends Robot
     {
         return q_fulcrum.getDoubleValue();
     }
+    public double getSecondAngularPosition()
+    {
+        return q_Second.getDoubleValue();
+    }
 
     /**
      * Fulcrum's angular velocity in radians per seconds
@@ -96,6 +100,10 @@ public class ArmRobot extends Robot
     public double getFulcrumAngularVelocity()
     {
         return qd_fulcrum.getDoubleValue();
+    }
+    public double getSecondAngularVelocity()
+    {
+        return qd_Second.getDoubleValue();
     }
 
     /**
@@ -132,6 +140,22 @@ public class ArmRobot extends Robot
         pendulumLink.setComOffset(0.0, 0.0, -ROD_LENGTH);
 
         Graphics3DObject pendulumGraphics = new Graphics3DObject();
+        pendulumGraphics.addSphere(FULCRUM_RADIUS, YoAppearance.Crimson());
+        pendulumGraphics.translate(0.0, 0.0, -ROD_LENGTH);
+        pendulumGraphics.addCylinder(ROD_LENGTH, ROD_RADIUS, YoAppearance.Black());
+        pendulumGraphics.addSphere(BALL_RADIUS, YoAppearance.Chartreuse());
+        pendulumLink.setLinkGraphics(pendulumGraphics);
+
+        return pendulumLink;
+    }
+    private Link secondLink()
+    {
+        Link pendulumLink = new Link("PendulumLink");
+        pendulumLink.setMomentOfInertia(0.0, FULCRUM_MOMENT_OF_INERTIA_ABOUT_Y, 0.0);
+        pendulumLink.setMass(BALL_MASS);
+        pendulumLink.setComOffset(0.0, 0.0, -ROD_LENGTH);
+
+        Graphics3DObject pendulumGraphics = new Graphics3DObject();
         pendulumGraphics.addSphere(FULCRUM_RADIUS, YoAppearance.BlueViolet());
         pendulumGraphics.translate(0.0, 0.0, -ROD_LENGTH);
         pendulumGraphics.addCylinder(ROD_LENGTH, ROD_RADIUS, YoAppearance.Black());
@@ -140,21 +164,5 @@ public class ArmRobot extends Robot
 
         return pendulumLink;
     }
-//    private Link secondLink()
-//    {
-//        Link pendulumLink = new Link("PendulumLink");
-//        pendulumLink.setMomentOfInertia(0.0, FULCRUM_MOMENT_OF_INERTIA_ABOUT_Y, 0.0);
-//        pendulumLink.setMass(BALL_MASS);
-//        pendulumLink.setComOffset(0.0, 0.0, -ROD_LENGTH);
-//
-//        Graphics3DObject pendulumGraphics = new Graphics3DObject();
-//        pendulumGraphics.addSphere(FULCRUM_RADIUS, YoAppearance.BlueViolet());
-//        pendulumGraphics.translate(0.0, 0.0, -ROD_LENGTH);
-//        pendulumGraphics.addCylinder(ROD_LENGTH, ROD_RADIUS, YoAppearance.Black());
-//        pendulumGraphics.addSphere(BALL_RADIUS, YoAppearance.Chartreuse());
-//        pendulumLink.setLinkGraphics(pendulumGraphics);
-//
-//        return pendulumLink;
-//    }
 
 }
