@@ -89,7 +89,7 @@ public class ArmController implements RobotController
     public void secondController()
     {
         // ERROR term: Compute the difference between the desired position the pendulum and its current position
-        positionError = 0 - robot.getSecondAngularPosition();
+        positionError = (desiredPositionRadians.getDoubleValue() * 0) - robot.getSecondAngularPosition();
 
         // INTEGRAL term: Compute a simple numerical integration of the position error
         integralError += positionError * ArmSimulation.DT;   //
