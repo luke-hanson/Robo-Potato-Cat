@@ -4,6 +4,7 @@ import us.ihmc.graphics3DAdapter.graphics.Graphics3DObject;
 import us.ihmc.graphics3DAdapter.graphics.appearances.YoAppearance;
 import us.ihmc.robotics.Axis;
 import us.ihmc.robotics.dataStructures.variable.DoubleYoVariable;
+import us.ihmc.simulationconstructionset.FloatingPlanarJoint;
 import us.ihmc.simulationconstructionset.Link;
 import us.ihmc.simulationconstructionset.PinJoint;
 import us.ihmc.simulationconstructionset.Robot;
@@ -20,6 +21,7 @@ public class ArmRobot extends Robot
     /*
        Define the parameters of the robot
     */
+
     public static final double ROD_LENGTH = 1.0;
     public static final double ROD_RADIUS = 0.01;
     public static final double ROD_MASS = 0.00;
@@ -49,35 +51,83 @@ public class ArmRobot extends Robot
      */
     public ArmRobot()
     {
+
         //` a. Call parent class "Robot" constructor. The string "SimplePendulum" will be the name of the robot.
-        super("pendulum");
+        super("JD");
 
+        PinJoint init = new PinJoint("FulcrumPin", new Vector3d(0.0, 0.0, 1.25), this, Axis.Y);
+
+        PinJoint q1PinJoint = new PinJoint("q1", new Vector3d(2.0, 0.0, 2.3125), this, Axis.X);
+//        PinJoint q2PinJoint = new PinJoint("FulcrumPin", new Vector3d(-2.0, 0.0, 2.3125), this, Axis.X);
+//        PinJoint q3PinJoint = new PinJoint("FulcrumPin", new Vector3d(-0.875, 0.0, -2.4375), this, Axis.X);
+//        PinJoint q4PinJoint = new PinJoint("FulcrumPin", new Vector3d(0.875, 0.0, -2.4375), this, Axis.X);
+
+        q1PinJoint.setDamping(1000);
+//        q2PinJoint.setDamping(1000);
+//        q3PinJoint.setDamping(1000);
+//        q4PinJoint.setDamping(1000);
+
+
+        Link q1Link = secondLink();
+//        Link q2Link = secondLink();
+//        Link q3Link = secondLink();
+//        Link q4Link = secondLink();
+
+        init.setLink(q1Link);
+//        init.setLink(q2Link);
+//        init.setLink(q3Link);
+//        init.setLink(q4Link);
+
+        init.addJoint(q1PinJoint);
+//        init.addJoint(q2PinJoint);
+//        init.addJoint(q3PinJoint);
+//        init.addJoint(q4PinJoint);
+        q1PinJoint.setInitialState(fulcrumInitialPositionRadians, fulcrumInitialVelocity);
+
+
+        this.addRootJoint(init);
         // b. Add a joint to the robot
-        PinJoint fulcrumPinJoint = new PinJoint("FulcrumPin", new Vector3d(0.0, 0.0, 1.25), this, Axis.Y);
-        PinJoint secondPinJoint = new PinJoint("SecondPin", new Vector3d(0.0, 0.0, -ROD_LENGTH), this, Axis.Y);
+//        PinJoint fulcrumPinJoint = new PinJoint("FulcrumPin", new Vector3d(0.0, 0.0, 1.25), this, Axis.Y);
+//        PinJoint secondPinJoint = new PinJoint("SecondPin", new Vector3d(0.0, 0.0, -ROD_LENGTH), this, Axis.Y);
+//        PinJoint zPinJoint = new PinJoint("zPin", new Vector3d(0.0, 0.0, 0.0), this, Axis.X);
+//
+//        fulcrumPinJoint.setInitialState(fulcrumInitialPositionRadians, fulcrumInitialVelocity);
+//        fulcrumPinJoint.setDamping(0.3);
+//
+//        zPinJoint.setInitialState(fulcrumInitialPositionRadians, fulcrumInitialVelocity);
+//
+//        Link secondLink = secondLink();
+//        fulcrumPinJoint.setLink(secondLink);// pendulumLink() method defined next.
+//
+//        Link zLink = zLink();
+//        fulcrumPinJoint.setLink(zLink);// pendulumLink() method defined next.
+//
+//
+//
+//        secondPinJoint.setInitialState(-fulcrumInitialPositionRadians, fulcrumInitialVelocity);
+//        secondPinJoint.setLink(pendulumLink());// pendulumLink() method defined next.
+//        secondPinJoint.setDamping(0.3);
+//
+//        zPinJoint.setInitialState(-fulcrumInitialPositionRadians, fulcrumInitialVelocity);
+//        zPinJoint.setLink(pendulumLink());// pendulumLink() method defined next.
+//        zPinJoint.setDamping(0.3);
+//
+//        q_fulcrum = fulcrumPinJoint.getQ();
+//        qd_fulcrum = fulcrumPinJoint.getQD();
+//        tau_fulcrum = fulcrumPinJoint.getTau();
+//
+//        q_Second = secondPinJoint.getQ();
+//        qd_Second = secondPinJoint.getQD();
+//        tau_Second = secondPinJoint.getTau();
+//
+//        fulcrumPinJoint.addJoint(secondPinJoint);
+//
+//        fulcrumPinJoint.addJoint(zPinJoint);
+//
+//        this.addRootJoint(fulcrumPinJoint);
 
-        fulcrumPinJoint.setInitialState(fulcrumInitialPositionRadians, fulcrumInitialVelocity);
-        Link secondLink = secondLink();
-        fulcrumPinJoint.setLink(secondLink);// pendulumLink() method defined next.
-        fulcrumPinJoint.setDamping(0.3);
 
-        secondPinJoint.setInitialState(-fulcrumInitialPositionRadians, fulcrumInitialVelocity);
-        secondPinJoint.setLink(pendulumLink());// pendulumLink() method defined next.
-        secondPinJoint.setDamping(0.3);
 
-        q_fulcrum = fulcrumPinJoint.getQ();
-        qd_fulcrum = fulcrumPinJoint.getQD();
-        tau_fulcrum = fulcrumPinJoint.getTau();
-
-        q_Second = secondPinJoint.getQ();
-        qd_Second = secondPinJoint.getQD();
-        tau_Second = secondPinJoint.getTau();
-
-        fulcrumPinJoint.addJoint(secondPinJoint);
-
-        this.addRootJoint(fulcrumPinJoint);
-
-        //this.addRootJoint(secondPinJoint);
     }
 
     /**
@@ -149,6 +199,22 @@ public class ArmRobot extends Robot
         return pendulumLink;
     }
     private Link secondLink()
+    {
+        Link pendulumLink = new Link("FulcrumPin");
+        pendulumLink.setMomentOfInertia(0.0, FULCRUM_MOMENT_OF_INERTIA_ABOUT_Y, 0.0);
+        pendulumLink.setMass(BALL_MASS);
+        pendulumLink.setComOffset(0.0, 0.0, -ROD_LENGTH);
+
+        Graphics3DObject pendulumGraphics = new Graphics3DObject();
+        pendulumGraphics.addSphere(FULCRUM_RADIUS, YoAppearance.BlueViolet());
+        pendulumGraphics.translate(0.0, 0.0, -ROD_LENGTH);
+        pendulumGraphics.addCylinder(ROD_LENGTH, ROD_RADIUS, YoAppearance.Black());
+        pendulumGraphics.addSphere(BALL_RADIUS, YoAppearance.Chartreuse());
+        pendulumLink.setLinkGraphics(pendulumGraphics);
+
+        return pendulumLink;
+    }
+    private Link zLink()
     {
         Link pendulumLink = new Link("PendulumLink");
         pendulumLink.setMomentOfInertia(0.0, FULCRUM_MOMENT_OF_INERTIA_ABOUT_Y, 0.0);
