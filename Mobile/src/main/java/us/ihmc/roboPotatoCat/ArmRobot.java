@@ -55,37 +55,44 @@ public class ArmRobot extends Robot
         //` a. Call parent class "Robot" constructor. The string "SimplePendulum" will be the name of the robot.
         super("JD");
 
-        PinJoint init = new PinJoint("FulcrumPin", new Vector3d(0.0, 0.0, 1.25), this, Axis.Y);
+        FloatingPlanarJoint rootJoint = new FloatingPlanarJoint("FulcrumPin", this);
+        //PinJoint rootJoint = new PinJoint("rootJoint", new Vector3d(2.0, 0.0, 2.3125), this, Axis.X);
 
-        PinJoint q1PinJoint = new PinJoint("q1", new Vector3d(2.0, 0.0, 2.3125), this, Axis.X);
-//        PinJoint q2PinJoint = new PinJoint("FulcrumPin", new Vector3d(-2.0, 0.0, 2.3125), this, Axis.X);
-//        PinJoint q3PinJoint = new PinJoint("FulcrumPin", new Vector3d(-0.875, 0.0, -2.4375), this, Axis.X);
-//        PinJoint q4PinJoint = new PinJoint("FulcrumPin", new Vector3d(0.875, 0.0, -2.4375), this, Axis.X);
-
-        q1PinJoint.setDamping(1000);
-//        q2PinJoint.setDamping(1000);
-//        q3PinJoint.setDamping(1000);
-//        q4PinJoint.setDamping(1000);
+        PinJoint rightShoulderRotator = new PinJoint("q1", new Vector3d(2.0, 0.0, 2.3125), this, Axis.X);
+        PinJoint leftShoulderRotator = new PinJoint("q2", new Vector3d(-2.0, 0.0, 2.3125), this, Axis.X);
+        PinJoint leftHip = new PinJoint("q3", new Vector3d(-0.875, 0.0, -2.4375), this, Axis.X);
+        PinJoint rightHip = new PinJoint("q4", new Vector3d(0.875, 0.0, -2.4375), this, Axis.X);
 
 
-        Link q1Link = secondLink();
-//        Link q2Link = secondLink();
-//        Link q3Link = secondLink();
-//        Link q4Link = secondLink();
-
-        init.setLink(q1Link);
-//        init.setLink(q2Link);
-//        init.setLink(q3Link);
-//        init.setLink(q4Link);
-
-        init.addJoint(q1PinJoint);
-//        init.addJoint(q2PinJoint);
-//        init.addJoint(q3PinJoint);
-//        init.addJoint(q4PinJoint);
-        q1PinJoint.setInitialState(fulcrumInitialPositionRadians, fulcrumInitialVelocity);
+        rightShoulderRotator.setDamping(0.3);
+        leftShoulderRotator.setDamping(0.3);
+        leftHip.setDamping(0.3);
+        rightHip.setDamping(0.3);
 
 
-        this.addRootJoint(init);
+        Link rightShoulderRotatorLink = secondLink();
+        Link leftShoulderRotatorLink = secondLink();
+        Link leftHipLink = secondLink();
+        Link rightHipLink = secondLink();
+
+        rootJoint.setLink(rightShoulderRotatorLink);
+        rootJoint.setLink(leftShoulderRotatorLink);
+        rootJoint.setLink(leftHipLink);
+        rootJoint.setLink(rightHipLink);
+
+        rightShoulderRotator.setLink(secondLink());
+        leftShoulderRotator.setLink(secondLink());
+        leftHip.setLink(secondLink());
+        rightHip.setLink(secondLink());
+
+        rootJoint.addJoint(rightShoulderRotator);
+        rootJoint.addJoint(leftShoulderRotator);
+        rootJoint.addJoint(leftHip);
+        rootJoint.addJoint(rightHip);
+        //rightShoulderRotator.setInitialState(fulcrumInitialPositionRadians, fulcrumInitialVelocity);
+
+        rootJoint.setLink(coreGraphic());
+        this.addRootJoint(rootJoint);
         // b. Add a joint to the robot
 //        PinJoint fulcrumPinJoint = new PinJoint("FulcrumPin", new Vector3d(0.0, 0.0, 1.25), this, Axis.Y);
 //        PinJoint secondPinJoint = new PinJoint("SecondPin", new Vector3d(0.0, 0.0, -ROD_LENGTH), this, Axis.Y);
@@ -99,8 +106,8 @@ public class ArmRobot extends Robot
 //        Link secondLink = secondLink();
 //        fulcrumPinJoint.setLink(secondLink);// pendulumLink() method defined next.
 //
-//        Link zLink = zLink();
-//        fulcrumPinJoint.setLink(zLink);// pendulumLink() method defined next.
+//        Link coreGraphic = coreGraphic();
+//        fulcrumPinJoint.setLink(coreGraphic);// pendulumLink() method defined next.
 //
 //
 //
@@ -203,18 +210,27 @@ public class ArmRobot extends Robot
         Link pendulumLink = new Link("FulcrumPin");
         pendulumLink.setMomentOfInertia(0.0, FULCRUM_MOMENT_OF_INERTIA_ABOUT_Y, 0.0);
         pendulumLink.setMass(BALL_MASS);
-        pendulumLink.setComOffset(0.0, 0.0, -ROD_LENGTH);
+        //pendulumLink.setComOffset(0.0, 0.0, -ROD_LENGTH);
 
         Graphics3DObject pendulumGraphics = new Graphics3DObject();
-        pendulumGraphics.addSphere(FULCRUM_RADIUS, YoAppearance.BlueViolet());
-        pendulumGraphics.translate(0.0, 0.0, -ROD_LENGTH);
-        pendulumGraphics.addCylinder(ROD_LENGTH, ROD_RADIUS, YoAppearance.Black());
-        pendulumGraphics.addSphere(BALL_RADIUS, YoAppearance.Chartreuse());
+        //pendulumGraphics.addSphere(FULCRUM_RADIUS, YoAppearance.BlueViolet());
+        //pendulumGraphics.translate(0.0, 0.0, 0.0);
+        pendulumGraphics.addCylinder(ROD_LENGTH, ROD_RADIUS, YoAppearance.AliceBlue());
+        pendulumGraphics.rotate((Math.PI/2), Axis.Y);
+        pendulumGraphics.addCylinder(ROD_LENGTH*.1, ROD_RADIUS*8, YoAppearance.Black());
+        //pendulumGraphics.addCube(ROD_LENGTH, ROD_RADIUS, ROD_RADIUS, YoAppearance.LemonChiffon());
+
+
+        //pendulumGraphics.addCoordinateSystem(1);
+        //pendulumGraphics.addTeaPot(YoAppearance.PapayaWhip());
+        //pendulumGraphics.addSphere(BALL_RADIUS, YoAppearance.Chartreuse());
+
+
         pendulumLink.setLinkGraphics(pendulumGraphics);
 
         return pendulumLink;
     }
-    private Link zLink()
+    private Link coreGraphic()
     {
         Link pendulumLink = new Link("PendulumLink");
         pendulumLink.setMomentOfInertia(0.0, FULCRUM_MOMENT_OF_INERTIA_ABOUT_Y, 0.0);
@@ -222,13 +238,12 @@ public class ArmRobot extends Robot
         pendulumLink.setComOffset(0.0, 0.0, -ROD_LENGTH);
 
         Graphics3DObject pendulumGraphics = new Graphics3DObject();
-        pendulumGraphics.addSphere(FULCRUM_RADIUS, YoAppearance.BlueViolet());
+        pendulumGraphics.addSphere(BALL_RADIUS*5, YoAppearance.Magenta());
         pendulumGraphics.translate(0.0, 0.0, -ROD_LENGTH);
-        pendulumGraphics.addCylinder(ROD_LENGTH, ROD_RADIUS, YoAppearance.Black());
-        pendulumGraphics.addSphere(BALL_RADIUS, YoAppearance.Chartreuse());
+        //pendulumGraphics.addCylinder(ROD_LENGTH, ROD_RADIUS, YoAppearance.Black());
+        //pendulumGraphics.addSphere(BALL_RADIUS, YoAppearance.Chartreuse());
         pendulumLink.setLinkGraphics(pendulumGraphics);
 
         return pendulumLink;
     }
-
 }
