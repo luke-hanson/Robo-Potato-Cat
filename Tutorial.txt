@@ -1,0 +1,11 @@
+3/ 9 / 2017
+
+-do ihmc tutorial
+-make multi joint pendulum(two joints connected)
+-make it go woowoo(multiple controllers)
+-make a robot with four joints(Planar joint with 4 joints)
+-complete arms and legs
+-make feet (ground contact)
+-controllers for waving
+-controllers for squatting
+-bonus: head and skin
