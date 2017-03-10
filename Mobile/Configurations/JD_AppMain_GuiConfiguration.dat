@@ -1,5 +1,53 @@
 <GraphGroup>
 	<Cols>1</Cols>
+	<Graph>
+		<Variables>root.JD.t</Variables>
+		<GraphConfiguration>
+			<Name>config1</Name>
+			<ScalingMethod>1</ScalingMethod>
+			<PlotType>100</PlotType>
+			<ShowBaseLines>true</ShowBaseLines>
+			<BaseLines>0.0,</BaseLines>
+			<MaxScaling>1.0</MaxScaling>
+			<MinScaling>0.0</MinScaling>
+		</GraphConfig>
+	</Graph>
+	<Graph>
+		<Variables>root.JD.q_z</Variables>
+		<GraphConfiguration>
+			<Name>config2</Name>
+			<ScalingMethod>1</ScalingMethod>
+			<PlotType>100</PlotType>
+			<ShowBaseLines>true</ShowBaseLines>
+			<BaseLines>0.0,</BaseLines>
+			<MaxScaling>1.0</MaxScaling>
+			<MinScaling>0.0</MinScaling>
+		</GraphConfig>
+	</Graph>
+	<Graph>
+		<Variables>root.JD.rootJointGcp_z,root.JD.rootJointGcp_dZ,root.JD.rootJointGcp_fZ</Variables>
+		<GraphConfiguration>
+			<Name>config3</Name>
+			<ScalingMethod>1</ScalingMethod>
+			<PlotType>100</PlotType>
+			<ShowBaseLines>true</ShowBaseLines>
+			<BaseLines>0.0,</BaseLines>
+			<MaxScaling>1.0</MaxScaling>
+			<MinScaling>0.0</MinScaling>
+		</GraphConfig>
+	</Graph>
+	<Graph>
+		<Variables>root.JD.rootJointGcp_fZ</Variables>
+		<GraphConfiguration>
+			<Name>config4</Name>
+			<ScalingMethod>1</ScalingMethod>
+			<PlotType>100</PlotType>
+			<ShowBaseLines>true</ShowBaseLines>
+			<BaseLines>0.0,</BaseLines>
+			<MaxScaling>1.0</MaxScaling>
+			<MinScaling>0.0</MinScaling>
+		</GraphConfig>
+	</Graph>
 </GraphGroup>
 <Entry Boxes Tab Pane>
 </Entry Boxes Tab Pane>
@@ -19,9 +67,9 @@
 
 <Current View>Normal View</Current View>
  <Canvas 1> 
- <Camera X>0.2627944390865042</Camera X>
- <Camera Y>-26.90929510637158</Camera Y>
- <Camera Z>2.3741503101982624</Camera Z>
+ <Camera X>-6.127853676772565</Camera X>
+ <Camera Y>-1.3740071153644104</Camera Y>
+ <Camera Z>9.631868983543963</Camera Z>
  <Dolly data> 
  <Position X>2.0</Position X>
  <Position Y>12.0</Position Y>
@@ -45,8 +93,8 @@
 </Track Booleans>
 </Track data>
 <Fix Position>
-<Fix X>0.0</Fix X>
-<Fix Y>0.0</Fix Y>
-<Fix Z>0.7</Fix Z>
+<Fix X>1.6986676643719432</Fix X>
+<Fix Y>-0.5416500124310257</Fix Y>
+<Fix Z>5.26577858711321</Fix Z>
 </Fix Position>
 </Canvas 1>
