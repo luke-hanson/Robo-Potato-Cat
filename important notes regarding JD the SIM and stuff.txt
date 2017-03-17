@@ -1,0 +1,24 @@
+JD joint measurement notes
+	servo joint unit length = 60mm / 1 "unit" in the code
+	servo joint 50mm wide
+	servo joint 20mm thick
+	body width 95mm
+	body height 60mm
+	body depth 60mm
+	shoulder y rotation to shoulder x rotation 30mm
+	"neck" 30mm shoulder to base of head
+	head diameter 80mm
+	foot length 110mm
+	ankle to heel 30mm
+	ankle to toe 80mm
+	foot width 70mm
+	ankle to inner foot 30mm
+	ankle to outer foot 40mm
+	hips are 60mm apart
+	
+in the simulation looking at JD from the starting orienation
+	x=width y=depth z=height
+	
+IMPORTANT IMPORTANT IMPORTANT
+	the "center" of JD body ie the point that all the bit "attach" is at the bottom-center of his body box
+	basicaly look at his body from the bottom; the point in the exact center is the EXACT place that all joint measuments extrapolate from

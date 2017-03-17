@@ -22,7 +22,7 @@ public class ArmRobot extends Robot
        Define the parameters of the robot
     */
 
-    public static final double ROD_LENGTH = 1.0;
+    public static final double SERVO_JOINT_LENGTH = 1; //1 = 60mm everything is extrapolated from that
     public static final double ROD_RADIUS = 0.01;
     public static final double ROD_MASS = 0.00;
 
@@ -32,13 +32,14 @@ public class ArmRobot extends Robot
     public static final double BALL_MASS = 1.0;
 
     public static final double FULCRUM_MOMENT_OF_INERTIA_ABOUT_X =
-            ROD_LENGTH * ROD_LENGTH * BALL_MASS; // I = mrˆ2 pendulum's resistance to changes to its rotation in  kg.mˆ2
+            SERVO_JOINT_LENGTH * SERVO_JOINT_LENGTH * BALL_MASS; // I = mrˆ2 pendulum's resistance to changes to its rotation in  kg.mˆ2
 
     private double fulcrumInitialPositionDegrees = 90.0;
     private double fulcrumInitialPositionRadians = fulcrumInitialPositionDegrees * Math.PI / 180.0;
     private double fulcrumInitialVelocity = 0.0;
 
     /* Some joint state variables */
+    ////NEED TO ADD OUR JOINTS SO THAT WE CAN MESS WITH THTEM IN THE SIM
     private DoubleYoVariable tau_fulcrum, q_fulcrum, qd_fulcrum; // Respectively Torque, Position, Velocity
     private DoubleYoVariable tau_Second, q_Second, qd_Second; // Respectively Torque, Position, Velocity
 
@@ -52,13 +53,13 @@ public class ArmRobot extends Robot
         super("JD");
 
         FloatingJoint rootJoint = new FloatingJoint("FulcrumPin", new Vector3d(), this);
-        rootJoint.setPosition(0, 0,3);
+        rootJoint.setPosition(0, 0,4);
 
         //instansiate new joints here - the vector3d is the point in space that the new part exists(i think)
-        PinJoint rightShoulderRotator = new PinJoint("rightShoulderRotator", new Vector3d(2.0, 0.0, 2.3125), this, Axis.X);
-        PinJoint leftShoulderRotator = new PinJoint("leftShoulderRotator", new Vector3d(-2.0, 0.0, 2.3125), this, Axis.X);
-        PinJoint leftHip = new PinJoint("leftHip", new Vector3d(-0.875, 0.0, -2.4375), this, Axis.X);
-        PinJoint rightHip = new PinJoint("rightHip", new Vector3d(0.875, 0.0, -2.4375), this, Axis.X);
+        PinJoint rightShoulderRotator = new PinJoint("rightShoulderRotator", new Vector3d(.78, 0.0, .75), this, Axis.X);
+        PinJoint leftShoulderRotator = new PinJoint("leftShoulderRotator", new Vector3d(-0.78, 0.0, 0.75), this, Axis.X);
+        PinJoint leftHip = new PinJoint("leftHip", new Vector3d(-0.5, 0.0, 0), this, Axis.X);
+        PinJoint rightHip = new PinJoint("rightHip", new Vector3d(0.5, 0.0, 0), this, Axis.X);
 
 
         //damping = how tight the joints are
@@ -175,12 +176,12 @@ public class ArmRobot extends Robot
         Link pendulumLink = new Link("PendulumLink");
         pendulumLink.setMomentOfInertia(FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X);
         pendulumLink.setMass(BALL_MASS);
-        pendulumLink.setComOffset(0.0, 0.0, -ROD_LENGTH);
+        pendulumLink.setComOffset(0.0, 0.0, -SERVO_JOINT_LENGTH);
 
         Graphics3DObject pendulumGraphics = new Graphics3DObject();
         pendulumGraphics.addSphere(FULCRUM_RADIUS, YoAppearance.Crimson());
-        pendulumGraphics.translate(0.0, 0.0, -ROD_LENGTH);
-        pendulumGraphics.addCylinder(ROD_LENGTH, ROD_RADIUS, YoAppearance.Black());
+        pendulumGraphics.translate(0.0, 0.0, -SERVO_JOINT_LENGTH);
+        pendulumGraphics.addCylinder(SERVO_JOINT_LENGTH, ROD_RADIUS, YoAppearance.Black());
         pendulumGraphics.addSphere(BALL_RADIUS, YoAppearance.Chartreuse());
         pendulumLink.setLinkGraphics(pendulumGraphics);
 
@@ -188,27 +189,27 @@ public class ArmRobot extends Robot
     }
     private Link servoPinAxisGraphic()
     {
-        Link servo = new Link("FulcrumPin");
+        Link servo = new Link("servoPin");
         servo.setMomentOfInertia(FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X);
         servo.setMass(BALL_MASS);
 
         Graphics3DObject servoHeadGraphics = new Graphics3DObject();
-        servoHeadGraphics.translate(-0.250, 0.0, 0.0);
+        servoHeadGraphics.translate(-0.0835, 0.0, 0.0);//0.0835 is one half of .167(the cylinders height) setting this value in the x pos negative centers the graphic on the center of the virtual object
         servoHeadGraphics.rotate((Math.PI/2), Axis.Y);
-        servoHeadGraphics.addCylinder(ROD_LENGTH*.5, .35, YoAppearance.Black());
+        servoHeadGraphics.addCylinder(.167, .084, YoAppearance.Black());
         servo.setLinkGraphics(servoHeadGraphics);
 
         return servo;
     }
     private Link coreGraphic()
     {
-        Link body = new Link("PendulumLink");
+        Link body = new Link("body");
         body.setMomentOfInertia(FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X);
         body.setMass(BALL_MASS);
 
         Graphics3DObject bodyGraphics = new Graphics3DObject();
-        bodyGraphics.translate(0.0, 0.0, -2.3);
-        bodyGraphics.addCube(ROD_LENGTH*4, ROD_LENGTH*2, ROD_LENGTH*5, YoAppearance.AntiqueWhite());//x=width y=depth z=height looking at the robot
+        bodyGraphics.translate(0.0, 0.0, 0);
+        bodyGraphics.addCube(1.585, SERVO_JOINT_LENGTH, SERVO_JOINT_LENGTH, YoAppearance.AntiqueWhite());//x=width y=depth z=height looking at the robot
         body.setLinkGraphics(bodyGraphics);
 
         return body;
