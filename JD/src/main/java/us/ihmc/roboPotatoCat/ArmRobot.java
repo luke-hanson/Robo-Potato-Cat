@@ -60,37 +60,42 @@ public class ArmRobot extends Robot
         PinJoint leftShoulderRotator = new PinJoint("leftShoulderRotator", new Vector3d(-0.78, 0.0, 0.75), this, Axis.X);
         PinJoint leftHip = new PinJoint("leftHip", new Vector3d(-0.5, 0.0, 0), this, Axis.X);
         PinJoint rightHip = new PinJoint("rightHip", new Vector3d(0.5, 0.0, 0), this, Axis.X);
-
+        PinJoint rightThigh = new PinJoint("rightThigh", new Vector3d(0.5, 0, -1), this, Axis.X);
 
         //damping = how tight the joints are
         rightShoulderRotator.setDamping(0.3);
         leftShoulderRotator.setDamping(0.3);
         leftHip.setDamping(0.3);
         rightHip.setDamping(0.3);
+        rightThigh.setDamping(0.3);
 
         //assign a graphic
         Link rightShoulderRotatorLink = servoPinAxisGraphic();
         Link leftShoulderRotatorLink = servoPinAxisGraphic();
         Link leftHipLink = servoPinAxisGraphic();
         Link rightHipLink = servoPinAxisGraphic();
+        Link rightThighLink = legSegment();
 
         //set the root joint
         rootJoint.setLink(rightShoulderRotatorLink);
         rootJoint.setLink(leftShoulderRotatorLink);
         rootJoint.setLink(leftHipLink);
         rootJoint.setLink(rightHipLink);
+        rootJoint.setLink(rightThighLink);
 
-        //set graphics a different way or it breaks?
+        //set graphics a different way or it breaks? just for joints? not links?
         rightShoulderRotator.setLink(servoPinAxisGraphic());
         leftShoulderRotator.setLink(servoPinAxisGraphic());
         leftHip.setLink(servoPinAxisGraphic());
         rightHip.setLink(servoPinAxisGraphic());
+        rightThigh.setLink(legSegment());
 
         //im not sure that i remember this bit
         rootJoint.addJoint(rightShoulderRotator);
         rootJoint.addJoint(leftShoulderRotator);
         rootJoint.addJoint(leftHip);
         rootJoint.addJoint(rightHip);
+        rootJoint.addJoint(rightThigh);
 
         //initial positions of joints
         rightShoulderRotator.setInitialState(fulcrumInitialPositionRadians, fulcrumInitialVelocity);
@@ -98,17 +103,21 @@ public class ArmRobot extends Robot
         rootJoint.setLink(coreGraphic());
         this.addRootJoint(rootJoint);
 
-        //ground contact modeling bit
+        //ground contact modeling bit  no contacts for just links?
         //each new contact point needs a new GroundContactPoint as below
         GroundContactPoint groundContactPoint = new GroundContactPoint("rootJointGcp", this);
         //and it will also need to be attached to a joint or link as below
         rightShoulderRotator.addGroundContactPoint(groundContactPoint);
+        //so ONE ground contact point starts here
         GroundContactPoint groundContactPointLS = new GroundContactPoint("leftShoulder", this);
         leftShoulderRotator.addGroundContactPoint(groundContactPointLS);
+        //and ends here
         GroundContactPoint groundContactPointRH = new GroundContactPoint("rightHip", this);
         rightHip.addGroundContactPoint(groundContactPointRH);
         GroundContactPoint groundContactPointLH = new GroundContactPoint("leftHip", this);
         leftHip.addGroundContactPoint(groundContactPointLH);
+        GroundContactPoint groundContactPointRT = new GroundContactPoint("rightThigh", this);
+        leftHip.addGroundContactPoint(groundContactPointRT);
 
         //leave this bit alone!
         GroundContactModel groundModel = new LinearGroundContactModel(this, 1422, 150.6, 50.0, 1000.0,
@@ -168,22 +177,17 @@ public class ArmRobot extends Robot
         this.tau_Second.set(tau);
     }
 
-    /**
-     * Create the first link for the DoublePendulumRobot.
-     */
-    private Link pendulumLink()
+    //graphics bits are self-documenting :D
+    private Link legSegment()
     {
-        Link pendulumLink = new Link("PendulumLink");
+        Link pendulumLink = new Link("legSegment");
         pendulumLink.setMomentOfInertia(FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X);
         pendulumLink.setMass(BALL_MASS);
-        pendulumLink.setComOffset(0.0, 0.0, -SERVO_JOINT_LENGTH);
+        //pendulumLink.setComOffset(0.0, 0.0, -1);
 
-        Graphics3DObject pendulumGraphics = new Graphics3DObject();
-        pendulumGraphics.addSphere(FULCRUM_RADIUS, YoAppearance.Crimson());
-        pendulumGraphics.translate(0.0, 0.0, -SERVO_JOINT_LENGTH);
-        pendulumGraphics.addCylinder(SERVO_JOINT_LENGTH, ROD_RADIUS, YoAppearance.Black());
-        pendulumGraphics.addSphere(BALL_RADIUS, YoAppearance.Chartreuse());
-        pendulumLink.setLinkGraphics(pendulumGraphics);
+        Graphics3DObject legSegmentGraphics = new Graphics3DObject();
+        legSegmentGraphics.addCube(.84,.34,1, YoAppearance.DarkMagenta());
+        pendulumLink.setLinkGraphics(legSegmentGraphics);
 
         return pendulumLink;
     }
