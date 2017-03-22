@@ -84,6 +84,7 @@ public class ArmRobot extends Robot
         rootJoint.setLink(rightThighLink);
 
         //set graphics a different way or it breaks? just for joints? not links?
+        //just accept it :)
         rightShoulderRotator.setLink(servoPinAxisGraphic());
         leftShoulderRotator.setLink(servoPinAxisGraphic());
         leftHip.setLink(servoPinAxisGraphic());
