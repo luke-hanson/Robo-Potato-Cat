@@ -61,7 +61,10 @@ public class ArmRobot extends Robot
         PinJoint leftShoulderRotator = new PinJoint("leftShoulderRotator", new Vector3d(-0.78, 0.0, 0.75), this, Axis.X);
         PinJoint leftHip = new PinJoint("leftHip", new Vector3d(-0.5, 0.0, 0), this, Axis.X);
         PinJoint rightHip = new PinJoint("rightHip", new Vector3d(0.5, 0.0, 0), this, Axis.X);
-        PinJoint rightKnee = new PinJoint("rightKnee", new Vector3d(0.5, 0, -1), this, Axis.X);
+        PinJoint rightKnee = new PinJoint("rightKnee", new Vector3d(0.5, 0, 0), this, Axis.X);
+        //trying something... time to go bananas
+        PinJoint rightCalf = new PinJoint("rightCalf", new Vector3d(0, 0.0, -1), this, Axis.X);
+        PinJoint TEST = new PinJoint("test", new Vector3d(-0.5,0,-1), this, Axis.X);
 
         //damping = how tight the joints are
         rightShoulderRotator.setDamping(0.3);
@@ -69,6 +72,8 @@ public class ArmRobot extends Robot
         leftHip.setDamping(0.3);
         rightHip.setDamping(0.3);
         rightKnee.setDamping(0.3);
+        ////bananas
+        rightCalf.setDamping(.3);
 
         //assign a graphic
         Link rightShoulderRotatorLink = servoPinAxisGraphic();
@@ -77,6 +82,9 @@ public class ArmRobot extends Robot
         Link rightHipLink = servoPinAxisGraphic();
         Link rightKneeLink = legSegment();//currently these graphics are incorrectly positioned. the thigh will be represented by hip joint, lower leg by knee joint,
         // and foot by hip joint
+        //bananas
+        Link rightCalfLink = legSegment();
+        Link TESTLink = servoPinAxisGraphic();
 
         //set the root joint
         rootJoint.setLink(rightShoulderRotatorLink);
@@ -86,6 +94,9 @@ public class ArmRobot extends Robot
         rootJoint.setLink(rightKneeLink);
         //rightHipLink.setLink(rightKneeLink);
         rightHip.setLink(rightKneeLink);
+        //bananas
+        rightKnee.setLink(rightCalfLink);
+        TEST.setLink(TESTLink);
 
         //set graphics a different way or it breaks? just for joints? not links?
         //just accept it :)
@@ -95,6 +106,9 @@ public class ArmRobot extends Robot
         rightHip.setLink(servoPinAxisGraphic());
         //rightKnee.setLink(servoPinAxisGraphic());
         rightKnee.setLink(legSegment());
+        //bananas
+        rightCalf.setLink(legSegment());
+        TEST.setLink(servoPinAxisGraphic());
 
         //im not sure that i remember this bit
         rootJoint.addJoint(rightShoulderRotator);
@@ -103,6 +117,9 @@ public class ArmRobot extends Robot
         rootJoint.addJoint(rightHip);
         //rootJoint.addJoint(rightKnee);
         rightHip.addJoint(rightKnee);//gave it this, hopefully won't break controller
+        ////bananas
+        rightKnee.addJoint(rightCalf);
+        rightCalf.addJoint(TEST);
 
         //initial positions of joints
         rightShoulderRotator.setInitialState(fulcrumInitialPositionRadians, fulcrumInitialVelocity);
@@ -125,6 +142,11 @@ public class ArmRobot extends Robot
         leftHip.addGroundContactPoint(groundContactPointLH);
         GroundContactPoint groundContactPointRT = new GroundContactPoint("rightKnee", this);
         rightKnee.addGroundContactPoint(groundContactPointRT);
+        ////bananas
+        GroundContactPoint groundContactPointRC = new GroundContactPoint("rightCalf", this);
+        rightCalf.addGroundContactPoint(groundContactPointRC);
+        GroundContactPoint groundContactPointTEST = new GroundContactPoint("test", this);
+        TEST.addGroundContactPoint(groundContactPointTEST);
 
         //leave this bit alone!
         GroundContactModel groundModel = new LinearGroundContactModel(this, 1422, 150.6, 50.0, 1000.0,
@@ -193,8 +215,8 @@ public class ArmRobot extends Robot
         //legSegment.setComOffset(0.0, 0.0, -1);
 
         Graphics3DObject legSegmentGraphics = new Graphics3DObject();
-        legSegmentGraphics.translate(-.5, 0, 0);// this translation helps place the leg segment where it "belongs"
-        legSegmentGraphics.addCube(.84,.34,1, YoAppearance.DarkMagenta());
+        legSegmentGraphics.translate(-.5, 0, -1);// this translation helps place the leg segment where it "belongs"
+        legSegmentGraphics.addCube(.8232,.3332,.98, YoAppearance.DarkMagenta());
         legSegment.setLinkGraphics(legSegmentGraphics);
 
         return legSegment;
