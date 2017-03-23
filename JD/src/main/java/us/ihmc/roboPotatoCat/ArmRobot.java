@@ -118,7 +118,7 @@ public class ArmRobot extends Robot
         GroundContactPoint groundContactPointLH = new GroundContactPoint("leftHip", this);
         leftHip.addGroundContactPoint(groundContactPointLH);
         GroundContactPoint groundContactPointRT = new GroundContactPoint("rightThigh", this);
-        leftHip.addGroundContactPoint(groundContactPointRT);
+        rightThigh.addGroundContactPoint(groundContactPointRT);
 
         //leave this bit alone!
         GroundContactModel groundModel = new LinearGroundContactModel(this, 1422, 150.6, 50.0, 1000.0,
