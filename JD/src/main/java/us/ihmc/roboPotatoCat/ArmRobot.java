@@ -55,33 +55,35 @@ public class ArmRobot extends Robot
         FloatingJoint rootJoint = new FloatingJoint("FulcrumPin", new Vector3d(), this);
         rootJoint.setPosition(0, 0,4);
 
-        //instansiate new joints here - the vector3d is the point in space that the new part exists(i think)
+        //instantiate new joints here - the vector3d is the point in space that the new part exists(i think)
         PinJoint rightShoulderRotator = new PinJoint("rightShoulderRotator", new Vector3d(.78, 0.0, .75), this, Axis.X);
         PinJoint leftShoulderRotator = new PinJoint("leftShoulderRotator", new Vector3d(-0.78, 0.0, 0.75), this, Axis.X);
         PinJoint leftHip = new PinJoint("leftHip", new Vector3d(-0.5, 0.0, 0), this, Axis.X);
         PinJoint rightHip = new PinJoint("rightHip", new Vector3d(0.5, 0.0, 0), this, Axis.X);
-        PinJoint rightThigh = new PinJoint("rightThigh", new Vector3d(0.5, 0, -1), this, Axis.X);
+        PinJoint rightKnee = new PinJoint("rightKnee", new Vector3d(0.5, 0, -1), this, Axis.X);
 
         //damping = how tight the joints are
         rightShoulderRotator.setDamping(0.3);
         leftShoulderRotator.setDamping(0.3);
         leftHip.setDamping(0.3);
         rightHip.setDamping(0.3);
-        rightThigh.setDamping(0.3);
+        rightKnee.setDamping(0.3);
 
         //assign a graphic
         Link rightShoulderRotatorLink = servoPinAxisGraphic();
         Link leftShoulderRotatorLink = servoPinAxisGraphic();
         Link leftHipLink = servoPinAxisGraphic();
         Link rightHipLink = servoPinAxisGraphic();
-        Link rightThighLink = legSegment();
+        Link rightKneeLink = legSegment();//currently these graphics are incorrectly positioned. the thigh will be represented by hip joint, lower leg by knee joint,
+        // and foot by hip joint
 
         //set the root joint
         rootJoint.setLink(rightShoulderRotatorLink);
         rootJoint.setLink(leftShoulderRotatorLink);
         rootJoint.setLink(leftHipLink);
         rootJoint.setLink(rightHipLink);
-        rootJoint.setLink(rightThighLink);
+        rootJoint.setLink(rightKneeLink);
+        //rightHipLink.setLink(rightKneeLink);
 
         //set graphics a different way or it breaks? just for joints? not links?
         //just accept it :)
@@ -89,14 +91,15 @@ public class ArmRobot extends Robot
         leftShoulderRotator.setLink(servoPinAxisGraphic());
         leftHip.setLink(servoPinAxisGraphic());
         rightHip.setLink(servoPinAxisGraphic());
-        rightThigh.setLink(legSegment());
+        rightKnee.setLink(servoPinAxisGraphic());
 
         //im not sure that i remember this bit
         rootJoint.addJoint(rightShoulderRotator);
         rootJoint.addJoint(leftShoulderRotator);
         rootJoint.addJoint(leftHip);
         rootJoint.addJoint(rightHip);
-        rootJoint.addJoint(rightThigh);
+        //rootJoint.addJoint(rightKnee);
+        rightHip.addJoint(rightKnee);//gave it this, hopefully won't break controller
 
         //initial positions of joints
         rightShoulderRotator.setInitialState(fulcrumInitialPositionRadians, fulcrumInitialVelocity);
@@ -106,9 +109,9 @@ public class ArmRobot extends Robot
 
         //ground contact modeling bit  no contacts for just links?
         //each new contact point needs a new GroundContactPoint as below
-        GroundContactPoint groundContactPoint = new GroundContactPoint("rootJointGcp", this);
+        GroundContactPoint groundContactPointRS = new GroundContactPoint("rightShoulder", this);
         //and it will also need to be attached to a joint or link as below
-        rightShoulderRotator.addGroundContactPoint(groundContactPoint);
+        rightShoulderRotator.addGroundContactPoint(groundContactPointRS);
         //so ONE ground contact point starts here
         GroundContactPoint groundContactPointLS = new GroundContactPoint("leftShoulder", this);
         leftShoulderRotator.addGroundContactPoint(groundContactPointLS);
@@ -117,8 +120,8 @@ public class ArmRobot extends Robot
         rightHip.addGroundContactPoint(groundContactPointRH);
         GroundContactPoint groundContactPointLH = new GroundContactPoint("leftHip", this);
         leftHip.addGroundContactPoint(groundContactPointLH);
-        GroundContactPoint groundContactPointRT = new GroundContactPoint("rightThigh", this);
-        rightThigh.addGroundContactPoint(groundContactPointRT);
+        GroundContactPoint groundContactPointRT = new GroundContactPoint("rightKnee", this);
+        rightKnee.addGroundContactPoint(groundContactPointRT);
 
         //leave this bit alone!
         GroundContactModel groundModel = new LinearGroundContactModel(this, 1422, 150.6, 50.0, 1000.0,
