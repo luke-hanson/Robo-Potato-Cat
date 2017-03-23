@@ -25,7 +25,7 @@
 		</GraphConfig>
 	</Graph>
 	<Graph>
-		<Variables>root.JD.rootJointGcp_z,root.JD.rootJointGcp_dZ,root.JD.rootJointGcp_fZ</Variables>
+		<Variables></Variables>
 		<GraphConfiguration>
 			<Name>config3</Name>
 			<ScalingMethod>1</ScalingMethod>
@@ -37,7 +37,7 @@
 		</GraphConfig>
 	</Graph>
 	<Graph>
-		<Variables>root.JD.rootJointGcp_fZ</Variables>
+		<Variables></Variables>
 		<GraphConfiguration>
 			<Name>config4</Name>
 			<ScalingMethod>1</ScalingMethod>
@@ -67,9 +67,9 @@
 
 <Current View>Normal View</Current View>
  <Canvas 1> 
- <Camera X>8.062287146481482</Camera X>
- <Camera Y>-5.915787888347903</Camera Y>
- <Camera Z>3.7230884938301836</Camera Z>
+ <Camera X>8.758843589602776</Camera X>
+ <Camera Y>-1.3405265229469305</Camera Y>
+ <Camera Z>2.901500095536296</Camera Z>
  <Dolly data> 
  <Position X>2.0</Position X>
  <Position Y>12.0</Position Y>
@@ -93,8 +93,8 @@
 </Track Booleans>
 </Track data>
 <Fix Position>
-<Fix X>0.9214295651737098</Fix X>
-<Fix Y>-0.4553477187067916</Fix Y>
-<Fix Z>3.273926877873526</Fix Z>
+<Fix X>0.1757777818748279</Fix X>
+<Fix Y>-0.0013219837139146762</Fix Y>
+<Fix Z>0.5461842903184985</Fix Z>
 </Fix Position>
 </Canvas 1>

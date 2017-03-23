@@ -40,6 +40,7 @@ public class ArmRobot extends Robot
 
     /* Some joint state variables */
     ////NEED TO ADD OUR JOINTS SO THAT WE CAN MESS WITH THTEM IN THE SIM
+    //YES
     private DoubleYoVariable tau_fulcrum, q_fulcrum, qd_fulcrum; // Respectively Torque, Position, Velocity
     private DoubleYoVariable tau_Second, q_Second, qd_Second; // Respectively Torque, Position, Velocity
 
@@ -84,6 +85,7 @@ public class ArmRobot extends Robot
         rootJoint.setLink(rightHipLink);
         rootJoint.setLink(rightKneeLink);
         //rightHipLink.setLink(rightKneeLink);
+        rightHip.setLink(rightKneeLink);
 
         //set graphics a different way or it breaks? just for joints? not links?
         //just accept it :)
@@ -91,7 +93,8 @@ public class ArmRobot extends Robot
         leftShoulderRotator.setLink(servoPinAxisGraphic());
         leftHip.setLink(servoPinAxisGraphic());
         rightHip.setLink(servoPinAxisGraphic());
-        rightKnee.setLink(servoPinAxisGraphic());
+        //rightKnee.setLink(servoPinAxisGraphic());
+        rightKnee.setLink(legSegment());
 
         //im not sure that i remember this bit
         rootJoint.addJoint(rightShoulderRotator);
@@ -184,16 +187,17 @@ public class ArmRobot extends Robot
     //graphics bits are self-documenting :D
     private Link legSegment()
     {
-        Link pendulumLink = new Link("legSegment");
-        pendulumLink.setMomentOfInertia(FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X);
-        pendulumLink.setMass(BALL_MASS);
-        //pendulumLink.setComOffset(0.0, 0.0, -1);
+        Link legSegment = new Link("legSegment");
+        legSegment.setMomentOfInertia(FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X);
+        legSegment.setMass(BALL_MASS);
+        //legSegment.setComOffset(0.0, 0.0, -1);
 
         Graphics3DObject legSegmentGraphics = new Graphics3DObject();
+        legSegmentGraphics.translate(-.5, 0, 0);// this translation helps place the leg segment where it "belongs"
         legSegmentGraphics.addCube(.84,.34,1, YoAppearance.DarkMagenta());
-        pendulumLink.setLinkGraphics(legSegmentGraphics);
+        legSegment.setLinkGraphics(legSegmentGraphics);
 
-        return pendulumLink;
+        return legSegment;
     }
     private Link servoPinAxisGraphic()
     {
