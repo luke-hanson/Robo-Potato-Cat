@@ -97,19 +97,19 @@ public class ArmRobot extends Robot
         //assign a graphic
         rightShoulderRotator.setLink(servoPinAxisGraphicR());
         leftShoulderRotator.setLink(servoPinAxisGraphicL());
-        rightShoulderFlapper.setLink(testSphereArmThigh());
-        leftShoulderFlapper.setLink(testSphereArmThigh());
-        rightElbow.setLink(testSphereForearm());
-        leftElbow.setLink(testSphereForearm());
+        rightShoulderFlapper.setLink(testSphereArmThighR());
+        leftShoulderFlapper.setLink(testSphereArmThighL());
+        rightElbow.setLink(testSphereForearmR());
+        leftElbow.setLink(testSphereForearmL());
         rightHand.setLink(testSphereHand());
         leftHand.setLink(testSphereHand());
 
-        rightHip.setLink(testSphereThigh());
-        leftHip.setLink(testSphereThigh());
+        rightHip.setLink(testSphereThighR());
+        leftHip.setLink(testSphereThighL());
         rightKnee.setLink(testSphereLeg());
         leftKnee.setLink(testSphereLeg());
-        rightAnkle.setLink(testSphereFoot());
-        leftAnkle.setLink(testSphereFoot());
+        rightAnkle.setLink(testSphereFootR());
+        leftAnkle.setLink(testSphereFootL());
 
         //attach joints to each other
         rootJoint.addJoint(rightShoulderRotator);
@@ -271,8 +271,8 @@ public class ArmRobot extends Robot
         Graphics3DObject servoHeadGraphics = new Graphics3DObject();
 
         servoHeadGraphics.rotate((Math.PI/2), Axis.Y);
-        servoHeadGraphics.translate(0.0, 0.0, -0.0835);//0.0835 is one half of .167(the cylinders height) setting this value in the x pos negative centers the graphic on the center of the virtual object
-        servoHeadGraphics.addCylinder(.6, .084, YoAppearance.Black());
+        servoHeadGraphics.translate(0.0, 0.0, 0.0);//0.0835 is one half of .167(the cylinders height) setting this value in the x pos negative centers the graphic on the center of the virtual object
+        servoHeadGraphics.addCylinder(.6, .15, YoAppearance.Black());
         servo.setLinkGraphics(servoHeadGraphics);
 
         return servo;
@@ -288,7 +288,7 @@ public class ArmRobot extends Robot
 
         servoHeadGraphics.rotate((Math.PI/2), Axis.Y);
         servoHeadGraphics.translate(0.0, 0.0, -.5);//0.0835 is one half of .167(the cylinders height) setting this value in the x pos negative centers the graphic on the center of the virtual object
-        servoHeadGraphics.addCylinder(.6, .084, YoAppearance.Black());
+        servoHeadGraphics.addCylinder(.6, .15, YoAppearance.Black());
         servo.setLinkGraphics(servoHeadGraphics);
 
         return servo;
@@ -301,14 +301,29 @@ public class ArmRobot extends Robot
         body.setMass(BALL_MASS);
 
         Graphics3DObject bodyGraphics = new Graphics3DObject();
-        bodyGraphics.translate(0.0, 0.0, 0);
-        bodyGraphics.addCube(3.75*INCH_TO_MILLIMETER, SERVO_JOINT_LENGTH, 2.625*INCH_TO_MILLIMETER, YoAppearance.AntiqueWhite());//x=width y=depth z=height looking at the robot
+        bodyGraphics.addCube(3.75*INCH_TO_MILLIMETER, SERVO_JOINT_LENGTH, 2.625*INCH_TO_MILLIMETER, YoAppearance.White());//x=width y=depth z=height looking at the robot
+        bodyGraphics.rotate((Math.PI/2), Axis.Z);
+        bodyGraphics.translate(0.0, 0.875*INCH_TO_MILLIMETER, -.5);
+        bodyGraphics.addCylinder(.5, .13, YoAppearance.Black());
+        bodyGraphics.translate(0.0, -0.875*INCH_TO_MILLIMETER*2, 0.0);
+        bodyGraphics.addCylinder(.5, .13, YoAppearance.Black());
+        bodyGraphics.translate(0.0, 0.875*INCH_TO_MILLIMETER, 0.5);
+        bodyGraphics.translate(0.0, 0.0, 1);
+        bodyGraphics.addCylinder(.5, .13, YoAppearance.Black());
+        //changing this translate affects the head
+        bodyGraphics.translate(0.0, 0.0, 1);
+        bodyGraphics.addSphere(.6, YoAppearance.White());//the actual head
+        bodyGraphics.rotate((Math.PI*0.2), Axis.Z);
+        bodyGraphics.rotate((Math.PI*0.2), Axis.Y);
+        bodyGraphics.translate(0.0, 0.05, .44);
+        bodyGraphics.addCylinder(.7, .4, YoAppearance.Black());
+        bodyGraphics.addCylinder(.05, .7, YoAppearance.Black());
         body.setLinkGraphics(bodyGraphics);
 
         return body;
     }
 
-    private Link testSphereThigh()
+    private Link testSphereThighR()
     {
         Link servo = new Link("servoPin");
         servo.setMomentOfInertia(FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X);
@@ -316,10 +331,31 @@ public class ArmRobot extends Robot
 
         Graphics3DObject servoHeadGraphics = new Graphics3DObject();
 
-        servoHeadGraphics.addSphere(FULCRUM_RADIUS, YoAppearance.BlueViolet());
-        servoHeadGraphics.translate(0.0, 0.0, -2.75*INCH_TO_MILLIMETER);
-        servoHeadGraphics.addCylinder(2.75*INCH_TO_MILLIMETER, ROD_RADIUS, YoAppearance.Black());
-        servoHeadGraphics.addSphere(BALL_RADIUS, YoAppearance.Chartreuse());
+        servoHeadGraphics.addSphere(0.25, YoAppearance.White());
+        servoHeadGraphics.translate(0.0, 0.0, -2.375*INCH_TO_MILLIMETER);
+        servoHeadGraphics.addCylinder(2.375*INCH_TO_MILLIMETER, 0.12, YoAppearance.Black());
+        servoHeadGraphics.addSphere(.2, YoAppearance.Chartreuse());
+        servo.setLinkGraphics(servoHeadGraphics);
+
+        return servo;
+    }
+
+    private Link testSphereThighL()
+    {
+        Link servo = new Link("servoPin");
+        servo.setMomentOfInertia(FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X);
+        servo.setMass(BALL_MASS);
+
+        Graphics3DObject servoHeadGraphics = new Graphics3DObject();
+
+        servoHeadGraphics.addSphere(0.25, YoAppearance.White());
+        //adding the groin bar
+        servoHeadGraphics.rotate((Math.PI/2), Axis.Y);
+        servoHeadGraphics.addCylinder(.6, 0.12, YoAppearance.Black());
+        servoHeadGraphics.rotate(-(Math.PI/2), Axis.Y);
+        servoHeadGraphics.translate(0.0, 0.0, -2.375*INCH_TO_MILLIMETER);
+        servoHeadGraphics.addCylinder(2.375*INCH_TO_MILLIMETER, 0.12, YoAppearance.Black());
+        servoHeadGraphics.addSphere(.2, YoAppearance.Chartreuse());
         servo.setLinkGraphics(servoHeadGraphics);
 
         return servo;
@@ -333,16 +369,17 @@ public class ArmRobot extends Robot
 
         Graphics3DObject servoHeadGraphics = new Graphics3DObject();
 
-        servoHeadGraphics.addSphere(FULCRUM_RADIUS, YoAppearance.BlueViolet());
-        servoHeadGraphics.translate(0.0, 0.0, -2.75*INCH_TO_MILLIMETER);
-        servoHeadGraphics.addCylinder(2.75*INCH_TO_MILLIMETER, ROD_RADIUS, YoAppearance.Black());
-        servoHeadGraphics.addSphere(BALL_RADIUS, YoAppearance.Chartreuse());
+        servoHeadGraphics.addSphere(.27, YoAppearance.White());
+
+        servoHeadGraphics.translate(0.0, 0.0, -2.125*INCH_TO_MILLIMETER);
+        servoHeadGraphics.addCylinder(2.125*INCH_TO_MILLIMETER, 0.12, YoAppearance.Black());
+        servoHeadGraphics.addSphere(.2, YoAppearance.Chartreuse());
         servo.setLinkGraphics(servoHeadGraphics);
 
         return servo;
     }
 
-    private Link testSphereFoot()
+    private Link testSphereFootR()
     {
         Link servo = new Link("servoPin");
         servo.setMomentOfInertia(FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X);
@@ -350,16 +387,33 @@ public class ArmRobot extends Robot
 
         Graphics3DObject servoHeadGraphics = new Graphics3DObject();
 
-        servoHeadGraphics.addSphere(FULCRUM_RADIUS, YoAppearance.BlueViolet());
-        servoHeadGraphics.translate(0.0, 0.0, -2.75*INCH_TO_MILLIMETER);
-        servoHeadGraphics.addCylinder(2.75*INCH_TO_MILLIMETER, ROD_RADIUS, YoAppearance.Black());
-        servoHeadGraphics.addSphere(BALL_RADIUS, YoAppearance.Chartreuse());
+        servoHeadGraphics.addSphere(.25, YoAppearance.Gray());
+        servoHeadGraphics.translate(0.1, 0.0, -0.625*INCH_TO_MILLIMETER);
+        servoHeadGraphics.rotate((Math.PI/2), Axis.Y);
+        //should we just use a rectangle?
         servo.setLinkGraphics(servoHeadGraphics);
 
         return servo;
     }
 
-    private Link testSphereArmThigh()
+    private Link testSphereFootL()
+    {
+        Link servo = new Link("servoPin");
+        servo.setMomentOfInertia(FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X);
+        servo.setMass(BALL_MASS);
+
+        Graphics3DObject servoHeadGraphics = new Graphics3DObject();
+
+        servoHeadGraphics.addSphere(.25, YoAppearance.Gray());
+        servoHeadGraphics.translate(0.1, 0.0, -0.625*INCH_TO_MILLIMETER);
+        servoHeadGraphics.rotate((Math.PI/2), Axis.Y);
+        //should we just use a rectangle?
+        servo.setLinkGraphics(servoHeadGraphics);
+
+        return servo;
+    }
+
+    private Link testSphereArmThighL()
     {
         Link servo = new Link("servoPin");
         servo.setMomentOfInertia(FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X);
@@ -368,16 +422,16 @@ public class ArmRobot extends Robot
         Graphics3DObject servoHeadGraphics = new Graphics3DObject();
 
         servoHeadGraphics.rotate((Math.PI/2), Axis.Y);
-        servoHeadGraphics.addSphere(.15, YoAppearance.BlueViolet());
+        servoHeadGraphics.addSphere(.4, YoAppearance.White());
         servoHeadGraphics.translate(0.0, 0.0, -2.75*INCH_TO_MILLIMETER);
-        servoHeadGraphics.addCylinder(2.75*INCH_TO_MILLIMETER, .1, YoAppearance.Black());
+        servoHeadGraphics.addCylinder(2.75*INCH_TO_MILLIMETER, .2, YoAppearance.Black());
         servoHeadGraphics.addSphere(BALL_RADIUS, YoAppearance.Chartreuse());
         servo.setLinkGraphics(servoHeadGraphics);
 
         return servo;
     }
 
-    private Link testSphereForearm()
+    private Link testSphereArmThighR()
     {
         Link servo = new Link("servoPin");
         servo.setMomentOfInertia(FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X);
@@ -385,9 +439,46 @@ public class ArmRobot extends Robot
 
         Graphics3DObject servoHeadGraphics = new Graphics3DObject();
 
-        servoHeadGraphics.addSphere(FULCRUM_RADIUS, YoAppearance.BlueViolet());
+        servoHeadGraphics.rotate((Math.PI/2), Axis.Y);
+        servoHeadGraphics.addSphere(.4, YoAppearance.White());
+        servoHeadGraphics.translate(0.0, 0.0, 0);
+        servoHeadGraphics.addCylinder(2.75*INCH_TO_MILLIMETER, .2, YoAppearance.Black());
+        servoHeadGraphics.addSphere(BALL_RADIUS, YoAppearance.Chartreuse());
+        servo.setLinkGraphics(servoHeadGraphics);
+
+        return servo;
+    }
+
+    private Link testSphereForearmR()
+    {
+        Link servo = new Link("servoPin");
+        servo.setMomentOfInertia(FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X);
+        servo.setMass(BALL_MASS);
+
+        Graphics3DObject servoHeadGraphics = new Graphics3DObject();
+
+        servoHeadGraphics.rotate((Math.PI/2), Axis.Y);
+        servoHeadGraphics.addSphere(.3, YoAppearance.White());
+        servoHeadGraphics.translate(0.0, 0.0, 0.0);
+        servoHeadGraphics.addCylinder(2.75*INCH_TO_MILLIMETER, .2, YoAppearance.Black());
+        servoHeadGraphics.addSphere(BALL_RADIUS, YoAppearance.Chartreuse());
+        servo.setLinkGraphics(servoHeadGraphics);
+
+        return servo;
+    }
+
+    private Link testSphereForearmL()
+    {
+        Link servo = new Link("servoPin");
+        servo.setMomentOfInertia(FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X);
+        servo.setMass(BALL_MASS);
+
+        Graphics3DObject servoHeadGraphics = new Graphics3DObject();
+
+        servoHeadGraphics.rotate((Math.PI/2), Axis.Y);
+        servoHeadGraphics.addSphere(.3, YoAppearance.White());
         servoHeadGraphics.translate(0.0, 0.0, -2.75*INCH_TO_MILLIMETER);
-        servoHeadGraphics.addCylinder(2.75*INCH_TO_MILLIMETER, ROD_RADIUS, YoAppearance.Black());
+        servoHeadGraphics.addCylinder(2.75*INCH_TO_MILLIMETER, .2, YoAppearance.Black());
         servoHeadGraphics.addSphere(BALL_RADIUS, YoAppearance.Chartreuse());
         servo.setLinkGraphics(servoHeadGraphics);
 
@@ -402,7 +493,8 @@ public class ArmRobot extends Robot
 
         Graphics3DObject servoHeadGraphics = new Graphics3DObject();
 
-        servoHeadGraphics.addSphere(.2, YoAppearance.Chartreuse());
+        servoHeadGraphics.addSphere(.32, YoAppearance.White());
+        servoHeadGraphics.addCylinder(.05, .4, YoAppearance.Black());
         servo.setLinkGraphics(servoHeadGraphics);
 
         return servo;
