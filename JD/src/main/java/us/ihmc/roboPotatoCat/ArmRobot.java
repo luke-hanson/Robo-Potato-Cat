@@ -182,6 +182,7 @@ public class ArmRobot extends Robot
 
         GroundContactPoint groundContactPointLA = new GroundContactPoint("leftAnkle", this);
         leftAnkle.addGroundContactPoint(groundContactPointLA);
+        GroundContactPoint groundContactPointLd = new GroundContactPoint("leftAnkle", this);
 
 //        GroundContactPoint groundContactPointTEST = new GroundContactPoint("test", this);
 //        TEST.addGroundContactPoint(groundContactPointTEST);
@@ -247,20 +248,6 @@ public class ArmRobot extends Robot
     //graphics bits are self-documenting :D
     //no they're not D:
     //individual methods for everything AAAAHHHH!!!
-    private Link legSegment()
-    {
-        Link legSegment = new Link("legSegment");
-        legSegment.setMomentOfInertia(FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X);
-        legSegment.setMass(BALL_MASS);
-        //legSegment.setComOffset(0.0, 0.0, -1);
-
-        Graphics3DObject legSegmentGraphics = new Graphics3DObject();
-        legSegmentGraphics.translate(-.5, 0, -1);// this translation helps place the leg segment where it "belongs"
-        legSegmentGraphics.addCube(.3,.3,.6, YoAppearance.DarkMagenta());
-        legSegment.setLinkGraphics(legSegmentGraphics);
-
-        return legSegment;
-    }
 
     private Link servoPinAxisGraphicL()
     {
@@ -388,9 +375,8 @@ public class ArmRobot extends Robot
         Graphics3DObject servoHeadGraphics = new Graphics3DObject();
 
         servoHeadGraphics.addSphere(.25, YoAppearance.Gray());
-        servoHeadGraphics.translate(0.1, 0.0, -0.625*INCH_TO_MILLIMETER);
-        servoHeadGraphics.rotate((Math.PI/2), Axis.Y);
-        //should we just use a rectangle?
+        servoHeadGraphics.translate(0.12, -0.22, -0.625*INCH_TO_MILLIMETER);
+        servoHeadGraphics.addHemiEllipsoid(0.4, 0.7, 0.4, YoAppearance.White());
         servo.setLinkGraphics(servoHeadGraphics);
 
         return servo;
@@ -405,9 +391,8 @@ public class ArmRobot extends Robot
         Graphics3DObject servoHeadGraphics = new Graphics3DObject();
 
         servoHeadGraphics.addSphere(.25, YoAppearance.Gray());
-        servoHeadGraphics.translate(0.1, 0.0, -0.625*INCH_TO_MILLIMETER);
-        servoHeadGraphics.rotate((Math.PI/2), Axis.Y);
-        //should we just use a rectangle?
+        servoHeadGraphics.translate(-0.12, -0.22, -0.625*INCH_TO_MILLIMETER);
+        servoHeadGraphics.addHemiEllipsoid(.4, .7, .4, YoAppearance.White());
         servo.setLinkGraphics(servoHeadGraphics);
 
         return servo;
