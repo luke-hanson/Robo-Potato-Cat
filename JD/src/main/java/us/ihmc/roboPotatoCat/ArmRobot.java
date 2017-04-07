@@ -11,6 +11,9 @@ import us.ihmc.simulationconstructionset.util.ground.FlatGroundProfile;
 
 import javax.vecmath.Vector3d;
 
+import static us.ihmc.simulationconstructionset.FloatingPlanarJoint.XY;
+import static us.ihmc.simulationconstructionset.FloatingPlanarJoint.XZ;
+
 /**
  *
  * lengths are expressed in meters (m), masses in kilograms (kg)
@@ -55,8 +58,8 @@ public class ArmRobot extends Robot
         //` a. Call parent class "Robot" constructor. The string "SimplePendulum" will be the name of the robot.
         super("JD");
 
-        FloatingJoint rootJoint = new FloatingJoint("FulcrumPin", new Vector3d(), this);
-        rootJoint.setPosition(0, 0,4);
+        FloatingPlanarJoint rootJoint = new FloatingPlanarJoint("FulcrumPin", this, XZ);
+        rootJoint.changeOffsetVector(0, 0, 2.65);
 
         //instantiate new joints here - the vector3d is the point in space that the new part exists(i think)
         PinJoint rightShoulderRotator = new PinJoint("rightShoulderRotator", new Vector3d(3*INCH_TO_MILLIMETER, 0.0, .75), this, Axis.X);//make sure to measure jd and adjust these Zs
@@ -74,8 +77,32 @@ public class ArmRobot extends Robot
         PinJoint leftKnee = new PinJoint("leftKnee", new Vector3d(0, 0, -2.375*INCH_TO_MILLIMETER), this, Axis.X);
         PinJoint rightAnkle = new PinJoint("rightAnkle", new Vector3d(0, 0.0, -2.125*INCH_TO_MILLIMETER), this, Axis.Y);
         PinJoint leftAnkle = new PinJoint("leftAnkle", new Vector3d(0, 0.0, -2.125*INCH_TO_MILLIMETER), this, Axis.Y);
-        //might need to add more joints for ground contact points on the feet, or maybe we can just offset GCPs from the ankles?
-        //PinJoint TEST = new PinJoint("test", new Vector3d(-0.5,0,-1), this, Axis.X);
+
+        //for foot contact points
+        PinJoint r1 = new PinJoint("r1", new Vector3d(-1*INCH_TO_MILLIMETER, -3*INCH_TO_MILLIMETER, -0.5*INCH_TO_MILLIMETER), this, Axis.Y);
+        PinJoint r2 = new PinJoint("r2", new Vector3d(-1*INCH_TO_MILLIMETER, 0.0, -0.5*INCH_TO_MILLIMETER), this, Axis.Y);
+        PinJoint r3 = new PinJoint("r3", new Vector3d(-1*INCH_TO_MILLIMETER, 1.5*INCH_TO_MILLIMETER, -0.5*INCH_TO_MILLIMETER), this, Axis.Y);
+        PinJoint r4 = new PinJoint("r4", new Vector3d(1.75*INCH_TO_MILLIMETER, 1.75*INCH_TO_MILLIMETER, -0.5*INCH_TO_MILLIMETER), this, Axis.Y);
+        PinJoint r5 = new PinJoint("r5", new Vector3d(1.75*INCH_TO_MILLIMETER, 0.0, -0.5*INCH_TO_MILLIMETER), this, Axis.Y);
+        PinJoint r6 = new PinJoint("r6", new Vector3d(1*INCH_TO_MILLIMETER, -3*INCH_TO_MILLIMETER, -0.5*INCH_TO_MILLIMETER), this, Axis.Y);
+
+        PinJoint l1 = new PinJoint("l1", new Vector3d(1*INCH_TO_MILLIMETER, -3*INCH_TO_MILLIMETER, -0.5*INCH_TO_MILLIMETER), this, Axis.Y);
+        PinJoint l2 = new PinJoint("l2", new Vector3d(1*INCH_TO_MILLIMETER, 0.0, -0.5*INCH_TO_MILLIMETER), this, Axis.Y);
+        PinJoint l3 = new PinJoint("l3", new Vector3d(1*INCH_TO_MILLIMETER, 1.5*INCH_TO_MILLIMETER, -0.5*INCH_TO_MILLIMETER), this, Axis.Y);
+        PinJoint l4 = new PinJoint("l4", new Vector3d(-1.75*INCH_TO_MILLIMETER, 1.75*INCH_TO_MILLIMETER, -0.5*INCH_TO_MILLIMETER), this, Axis.Y);
+        PinJoint l5 = new PinJoint("l5", new Vector3d(-1.75*INCH_TO_MILLIMETER, 0.0, -0.5*INCH_TO_MILLIMETER), this, Axis.Y);
+        PinJoint l6 = new PinJoint("l6", new Vector3d(-1*INCH_TO_MILLIMETER, -3*INCH_TO_MILLIMETER, -0.5*INCH_TO_MILLIMETER), this, Axis.Y);
+
+        leftShoulderFlapper.setLimitStops(-Math.PI/2,Math.PI/2,10,50);
+        leftElbow.setLimitStops(-Math.PI/2,Math.PI/2,10,50);
+        rightShoulderFlapper.setLimitStops(-Math.PI/2,Math.PI/2,10,50);
+        rightElbow.setLimitStops(-Math.PI/2,Math.PI/2,10,50);
+
+        rightHip.setLimitStops(-Math.PI/2,Math.PI/2, 10, 50);
+        leftHip.setLimitStops(-Math.PI/2,Math.PI/2, 10, 50);
+        rightKnee.setLimitStops(-Math.PI/2,Math.PI/2, 10, 100);
+        leftKnee.setLimitStops(-Math.PI/2,Math.PI/2, 10, 100);
+
 
         //damping = how tight the joints are
         rightShoulderRotator.setDamping(0.3);
@@ -111,6 +138,20 @@ public class ArmRobot extends Robot
         rightAnkle.setLink(testSphereFootR());
         leftAnkle.setLink(testSphereFootL());
 
+        r1.setLink(footsies());
+        r2.setLink(footsies());
+        r3.setLink(footsies());
+        r4.setLink(footsies());
+        r5.setLink(footsies());
+        r6.setLink(footsies());
+
+        l1.setLink(footsies());
+        l2.setLink(footsies());
+        l3.setLink(footsies());
+        l4.setLink(footsies());
+        l5.setLink(footsies());
+        l6.setLink(footsies());
+
         //attach joints to each other
         rootJoint.addJoint(rightShoulderRotator);
         rootJoint.addJoint(leftShoulderRotator);
@@ -128,6 +169,20 @@ public class ArmRobot extends Robot
         leftHip.addJoint(leftKnee);
         rightKnee.addJoint(rightAnkle);
         leftKnee.addJoint(leftAnkle);
+
+        rightAnkle.addJoint(r1);
+        rightAnkle.addJoint(r2);
+        rightAnkle.addJoint(r3);
+        rightAnkle.addJoint(r4);
+        rightAnkle.addJoint(r5);
+        rightAnkle.addJoint(r6);
+
+        leftAnkle.addJoint(l1);
+        leftAnkle.addJoint(l2);
+        leftAnkle.addJoint(l3);
+        leftAnkle.addJoint(l4);
+        leftAnkle.addJoint(l5);
+        leftAnkle.addJoint(l6);
 
         //initial positions of joints
         //rightShoulderRotator.setInitialState(fulcrumInitialPositionRadians, fulcrumInitialVelocity);
@@ -182,10 +237,32 @@ public class ArmRobot extends Robot
 
         GroundContactPoint groundContactPointLA = new GroundContactPoint("leftAnkle", this);
         leftAnkle.addGroundContactPoint(groundContactPointLA);
-        GroundContactPoint groundContactPointLd = new GroundContactPoint("leftAnkle", this);
 
-//        GroundContactPoint groundContactPointTEST = new GroundContactPoint("test", this);
-//        TEST.addGroundContactPoint(groundContactPointTEST);
+        GroundContactPoint groundContactPointR1 = new GroundContactPoint("r1", this);
+        r1.addGroundContactPoint(groundContactPointR1);
+        GroundContactPoint groundContactPointR2 = new GroundContactPoint("r2", this);
+        r2.addGroundContactPoint(groundContactPointR2);
+        GroundContactPoint groundContactPointR3 = new GroundContactPoint("r3", this);
+        r3.addGroundContactPoint(groundContactPointR3);
+        GroundContactPoint groundContactPointR4 = new GroundContactPoint("r4", this);
+        r4.addGroundContactPoint(groundContactPointR4);
+        GroundContactPoint groundContactPointR5 = new GroundContactPoint("r5", this);
+        r5.addGroundContactPoint(groundContactPointR5);
+        GroundContactPoint groundContactPointR6 = new GroundContactPoint("r6", this);
+        r6.addGroundContactPoint(groundContactPointR6);
+
+        GroundContactPoint groundContactPointL1 = new GroundContactPoint("l1", this);
+        l1.addGroundContactPoint(groundContactPointL1);
+        GroundContactPoint groundContactPointL2 = new GroundContactPoint("l2", this);
+        l2.addGroundContactPoint(groundContactPointL2);
+        GroundContactPoint groundContactPointL3 = new GroundContactPoint("l3", this);
+        l3.addGroundContactPoint(groundContactPointL3);
+        GroundContactPoint groundContactPointL4 = new GroundContactPoint("l4", this);
+        l4.addGroundContactPoint(groundContactPointL4);
+        GroundContactPoint groundContactPointL5 = new GroundContactPoint("l5", this);
+        l5.addGroundContactPoint(groundContactPointL5);
+        GroundContactPoint groundContactPointL6 = new GroundContactPoint("l6", this);
+        l6.addGroundContactPoint(groundContactPointL6);
 
         //leave this bit alone!
         GroundContactModel groundModel = new LinearGroundContactModel(this, 1422, 150.6, 50.0, 1000.0,
@@ -203,11 +280,14 @@ public class ArmRobot extends Robot
     {
         return q_fulcrum.getDoubleValue();
     }
-
     public double getSecondAngularPosition()
     {
         return q_Second.getDoubleValue();
     }
+    /*public double getSecondAngularPosition()
+    {
+        return q_Second.getDoubleValue();
+    }*/
 
     /**
      * Fulcrum's angular velocity in radians per seconds
@@ -481,6 +561,21 @@ public class ArmRobot extends Robot
         servoHeadGraphics.addSphere(.32, YoAppearance.White());
         servoHeadGraphics.addCylinder(.05, .4, YoAppearance.Black());
         servo.setLinkGraphics(servoHeadGraphics);
+
+        return servo;
+    }
+
+    private Link footsies()
+    {
+        Link servo = new Link("servoPin");
+        servo.setMomentOfInertia(FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X);
+        servo.setMass(1);
+
+//        Graphics3DObject servoHeadGraphics = new Graphics3DObject();
+//
+//        servoHeadGraphics.addSphere(.1, YoAppearance.White());
+//        servoHeadGraphics.addCylinder(.05, .4, YoAppearance.Black());
+//        servo.setLinkGraphics(servoHeadGraphics);
 
         return servo;
     }
