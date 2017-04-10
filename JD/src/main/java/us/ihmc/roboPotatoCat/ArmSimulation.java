@@ -15,7 +15,7 @@ public class ArmSimulation
     public ArmSimulation()
     {
         ArmRobot robot = new ArmRobot();
-//        robot.setController(new ArmController(robot));
+        robot.setController(new ArmController(robot));
 
         SimulationConstructionSetParameters parameters = new SimulationConstructionSetParameters();
         parameters.setDataBufferSize(32000);
