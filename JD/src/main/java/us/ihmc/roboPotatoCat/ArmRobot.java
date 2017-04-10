@@ -44,10 +44,22 @@ public class ArmRobot extends Robot
     private double fulcrumInitialVelocity = 0.0;
 
     /* Some joint state variables */
-    ////NEED TO ADD OUR JOINTS SO THAT WE CAN MESS WITH THTEM IN THE SIM
+    ////NEED TO ADD OUR JOINTS SO THAT WE CAN MESS WITH THEM IN THE SIM
     //YES
-    private DoubleYoVariable tau_fulcrum, q_fulcrum, qd_fulcrum; // Respectively Torque, Position, Velocity
-    private DoubleYoVariable tau_Second, q_Second, qd_Second; // Respectively Torque, Position, Velocity
+    private DoubleYoVariable tau_LRotator, q_LRotator, qd_LRotator; // Respectively Torque, Position, Velocity
+    private DoubleYoVariable tau_RRotator, q_RRotator, qd_RRotator;
+    private DoubleYoVariable tau_LFlapper, q_LFlapper, qd_LFlapper;
+    private DoubleYoVariable tau_RFlapper, q_RFlapper, qd_RFlapper;
+    private DoubleYoVariable tau_LElbow, q_LElbow, qd_LElbow;
+    private DoubleYoVariable tau_RElbow, q_RElbow, qd_RElbow;
+    private DoubleYoVariable tau_LHip, q_LHip, qd_LHip;
+    private DoubleYoVariable tau_RHip, q_RHip, qd_RHip;
+    private DoubleYoVariable tau_LKnee, q_LKnee, qd_LKnee;
+    private DoubleYoVariable tau_RKnee, q_RKnee, qd_RKnee;
+    private DoubleYoVariable tau_LAnkle, q_LAnkle, qd_LAnkle;
+    private DoubleYoVariable tau_RAnkle, q_RAnkle, qd_RAnkle;
+
+
 
     /*
        Define its constructor
@@ -59,7 +71,7 @@ public class ArmRobot extends Robot
         super("JD");
 
         FloatingPlanarJoint rootJoint = new FloatingPlanarJoint("FulcrumPin", this, XZ);
-        rootJoint.changeOffsetVector(0, 0, 2.65);
+        rootJoint.changeOffsetVector(0, 0, 2.65); //2.65 is right at ground
 
         //instantiate new joints here - the vector3d is the point in space that the new part exists(i think)
         PinJoint rightShoulderRotator = new PinJoint("rightShoulderRotator", new Vector3d(3*INCH_TO_MILLIMETER, 0.0, .75), this, Axis.X);//make sure to measure jd and adjust these Zs
@@ -184,6 +196,57 @@ public class ArmRobot extends Robot
         leftAnkle.addJoint(l5);
         leftAnkle.addJoint(l6);
 
+        //sets the position of the joint from the controllers
+        q_LRotator = leftShoulderRotator.getQ();
+        qd_LRotator = leftShoulderRotator.getQD();
+        tau_LRotator = leftShoulderRotator.getTau();
+
+        q_RRotator = rightShoulderRotator.getQ();
+        qd_RRotator = rightShoulderRotator.getQD();
+        tau_RRotator = rightShoulderRotator.getTau();
+
+        q_LFlapper = leftShoulderFlapper.getQ();
+        qd_LFlapper = leftShoulderFlapper.getQD();
+        tau_LFlapper = leftShoulderFlapper.getTau();
+
+        q_RFlapper = rightShoulderFlapper.getQ();
+        qd_RFlapper = rightShoulderFlapper.getQD();
+        tau_RFlapper = rightShoulderFlapper.getTau();
+
+        q_LElbow = leftElbow.getQ();
+        qd_LElbow = leftElbow.getQD();
+        tau_LElbow= leftElbow.getTau();
+
+        q_RElbow = rightElbow.getQ();
+        qd_RElbow = rightElbow.getQD();
+        tau_RElbow = rightElbow.getTau();
+
+        q_LHip = leftHip.getQ();
+        qd_LHip = leftHip.getQD();
+        tau_LHip = leftHip.getTau();
+
+        q_RHip = rightHip.getQ();
+        qd_RHip = rightHip.getQD();
+        tau_RHip = rightHip.getTau();
+
+        q_LKnee = leftKnee.getQ();
+        qd_LKnee = leftKnee.getQD();
+        tau_LKnee = leftKnee.getTau();
+
+        q_RKnee = rightKnee.getQ();
+        qd_RKnee = rightKnee.getQD();
+        tau_RKnee = rightKnee.getTau();
+
+        q_LAnkle = leftAnkle.getQ();
+        qd_LAnkle = leftAnkle.getQD();
+        tau_LAnkle = leftAnkle.getTau();
+
+        q_RAnkle = rightAnkle.getQ();
+        qd_RAnkle = rightAnkle.getQD();
+        tau_RAnkle = rightAnkle.getTau();
+
+
+
         //initial positions of joints
         //rightShoulderRotator.setInitialState(fulcrumInitialPositionRadians, fulcrumInitialVelocity);
         //rightHip.setInitialState(fulcrumInitialPositionRadians, fulcrumInitialVelocity);
@@ -276,14 +339,52 @@ public class ArmRobot extends Robot
      * Fulcrum's angular position in radians
      * @return angular position in radians
      */
-    public double getFulcrumAngularPosition()
+//    public double getFulcrumAngularPosition()
+//    {
+//        return q_fulcrum.getDoubleValue();
+//    }
+//    public double getSecondAngularPosition()
+//    {
+//        return q_Second.getDoubleValue();
+//    }
+
+    public double getLRotatorAngularPosition() { return q_LRotator.getDoubleValue(); }
+    public double getRRotatorAngularPosition() { return q_RRotator.getDoubleValue(); }
+    public double getLFlapperAngularPosition()
     {
-        return q_fulcrum.getDoubleValue();
+        return q_LFlapper.getDoubleValue();
     }
-    public double getSecondAngularPosition()
+    public double getRFlapperAngularPosition() { return q_RFlapper.getDoubleValue(); }
+    public double getLElbowAngularPosition()
     {
-        return q_Second.getDoubleValue();
+        return q_LElbow.getDoubleValue();
     }
+    public double getRElbowAngularPosition() { return q_RElbow.getDoubleValue(); }
+    public double getLHipAngularPosition()
+    {
+        return q_LHip.getDoubleValue();
+    }
+    public double getRHipAngularPosition()
+    {
+        return q_RHip.getDoubleValue();
+    }
+    public double getLKneeAngularPosition()
+    {
+        return q_LKnee.getDoubleValue();
+    }
+    public double getRKneeAngularPosition()
+    {
+        return q_RKnee.getDoubleValue();
+    }
+    public double getLAnkleAngularPosition()
+    {
+        return q_LAnkle.getDoubleValue();
+    }
+    public double getRAnkleAngularPosition()
+    {
+        return q_RAnkle.getDoubleValue();
+    }
+
     /*public double getSecondAngularPosition()
     {
         return q_Second.getDoubleValue();
@@ -293,37 +394,119 @@ public class ArmRobot extends Robot
      * Fulcrum's angular velocity in radians per seconds
      * @return angular velocity in radians per seconds
      */
-    public double getFulcrumAngularVelocity()
-    {
-        return qd_fulcrum.getDoubleValue();
-    }
-    public double getSecondAngularVelocity()
-    {
-        return qd_Second.getDoubleValue();
-    }
+//    public double getFulcrumAngularVelocity()
+//    {
+//        return qd_fulcrum.getDoubleValue();
+//    }
+//    public double getSecondAngularVelocity()
+//    {
+//        return qd_Second.getDoubleValue();
+//    }
 
+    public double getLRotatorAngularVelocity() { return qd_LRotator.getDoubleValue(); }
+    public double getRRotatorAngularVelocity() { return qd_RRotator.getDoubleValue(); }
+    public double getLFlapperAngularVelocity()
+    {
+        return qd_LFlapper.getDoubleValue();
+    }
+    public double getRFlapperAngularVelocity() { return qd_RFlapper.getDoubleValue(); }
+    public double getLElbowAngularVelocity()
+    {
+        return qd_LElbow.getDoubleValue();
+    }
+    public double getRElbowAngularVelocity() { return qd_RElbow.getDoubleValue(); }
+    public double getLHipAngularVelocity()
+    {
+        return qd_LHip.getDoubleValue();
+    }
+    public double getRHipAngularVelocity()
+    {
+        return qd_RHip.getDoubleValue();
+    }
+    public double getLKneeAngularVelocity()
+    {
+        return qd_LKnee.getDoubleValue();
+    }
+    public double getRKneeAngularVelocity()
+    {
+        return qd_RKnee.getDoubleValue();
+    }
+    public double getLAnkleAngularVelocity()
+    {
+        return qd_LAnkle.getDoubleValue();
+    }
+    public double getRAnkleAngularVelocity()
+    {
+        return qd_RAnkle.getDoubleValue();
+    }
     /**
      * Fulcrum's torque in Newton meter
      * @return Torque in Newton meter
      */
-    public double getFulcrumTorque()
-    {
-        return tau_fulcrum.getDoubleValue();
-    }
-
+    //public double getFulcrumTorque() { return tau_fulcrum.getDoubleValue(); }
+    //if something breaks, try uncommenting this
     /**
      * Set Fulcrum's torque in Newton meter
      * @return Torque in Newton meter
      */
-    public void setFulcrumTorque(double tau)
+//    public void setFulcrumTorque(double tau)
+//    {
+//        this.tau_fulcrum.set(tau);
+//    }
+//    public void setSecondTorque(double tau)
+//    {
+//        this.tau_Second.set(tau);
+//    }
+
+    public void setLRotatorTorque(double tau)
     {
-        this.tau_fulcrum.set(tau);
+        this.tau_LRotator.set(tau);
+    }
+    public void setRRotatorTorque(double tau)
+    {
+        this.tau_RRotator.set(tau);
+    }
+    public void setLFlapperTorque(double tau) { this.tau_LFlapper.set(tau); }
+    public void setRFlapperTorque(double tau)
+    {
+        this.tau_RFlapper.set(tau);
+    }
+    public void setLElbowTorque(double tau)
+    {
+        this.tau_LElbow.set(tau);
+    }
+    public void setRElbowTorque(double tau)
+    {
+        this.tau_RElbow.set(tau);
+    }
+    public void setLHipTorque(double tau)
+    {
+        this.tau_LHip.set(tau);
+    }
+    public void setRHipTorque(double tau)
+    {
+        this.tau_RHip.set(tau);
+    }
+    public void setLKneeTorque(double tau)
+    {
+        this.tau_LKnee.set(tau);
+    }
+    public void setRKneeTorque(double tau)
+    {
+        this.tau_RKnee.set(tau);
+    }
+    public void setLAnkleTorque(double tau)
+    {
+        this.tau_LAnkle.set(tau);
+    }
+    public void setRAnkleTorque(double tau)
+    {
+        this.tau_RAnkle.set(tau);
     }
 
-    public void setSecondTorque(double tau)
-    {
-        this.tau_Second.set(tau);
-    }
+
+
+
 
     //graphics bits are self-documenting :D
     //no they're not D:
