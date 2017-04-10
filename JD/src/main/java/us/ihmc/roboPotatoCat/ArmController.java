@@ -11,8 +11,7 @@ public class ArmController implements RobotController
     private final String name = "pendulumController";
 
     // This line instantiates a registry that will contain relevant controller variables that will be accessible from the simulation panel.
-    private final YoVariableRegistry registry = new YoVariableRegistry("PendulumController");
-    private final YoVariableRegistry secondRegistry = new YoVariableRegistry("SecondController");
+    private final YoVariableRegistry registry = new YoVariableRegistry("RobotController");
 
     // This is a reference to the SimplePendulumRobot that enables the controller to access this robot's variables.
     private ArmRobot robot;
@@ -24,7 +23,21 @@ public class ArmController implements RobotController
 
     // Controller parameter variables
     private DoubleYoVariable p_gain, d_gain, i_gain;
-    private DoubleYoVariable p_sec, d_sec, i_sec;
+
+//    private DoubleYoVariable p_LRot, d_LRot, i_LRot;
+//    private DoubleYoVariable p_RRot, d_RRot, i_RRot;
+//    private DoubleYoVariable p_LFlap, d_LFlap, i_LFlap;
+//    private DoubleYoVariable p_RFlap, d_RFlap, i_RFlap;
+//    private DoubleYoVariable p_LBow, d_LBow, i_LBow;
+//    private DoubleYoVariable p_RBow, d_RBow, i_RBow;
+//    private DoubleYoVariable p_LHip, d_LHip, i_LHip;
+//    private DoubleYoVariable p_RHip, d_RHip, i_RHip;
+//    private DoubleYoVariable p_LKnee, d_LKnee, i_LKnee;
+//    private DoubleYoVariable p_RKnee, d_RKnee, i_RKnee;
+//    private DoubleYoVariable p_LAnk, d_LAnk, i_LAnk;
+//    private DoubleYoVariable p_RAnk, d_RAnk, i_RAnk;
+
+
 
     // This is the desired torque that we will apply to the fulcrum joint (PinJoint)
     private double torque;
@@ -46,13 +59,6 @@ public class ArmController implements RobotController
         d_gain.set(100.0);
         i_gain = new DoubleYoVariable("IntegralGain", registry);
         i_gain.set(10.0);
-
-        p_sec = new DoubleYoVariable("ProportionalGain", secondRegistry);
-        p_sec.set(250.0);
-        d_sec = new DoubleYoVariable("DerivativeGain", secondRegistry);
-        d_sec.set(100.0);
-        i_sec = new DoubleYoVariable("IntegralGain", secondRegistry);
-        i_sec.set(10.0);
     }
 
     public void initialize()
@@ -65,14 +71,24 @@ public class ArmController implements RobotController
 
     public void doControl()
     {
-        fulcrumController();
-        secondController();
+        LRotatorController();
+        RRotatorController();
+        LFlapperController();
+        RFlapperController();
+        LElbowController();
+        RElbowController();
+        LHipController();
+        RHipController();
+        LKneeController();
+        RKneeController();
+        LAnkleController();
+        RAnkleController();
     }
 
-    public void fulcrumController()
+    public void LRotatorController()
     {
         // ERROR term: Compute the difference between the desired position the pendulum and its current position
-        positionError = (desiredPositionRadians.getDoubleValue() * .75) - robot.getFulcrumAngularPosition();
+        positionError = (desiredPositionRadians.getDoubleValue() * .25) - robot.getLRotatorAngularPosition();
 
         // INTEGRAL term: Compute a simple numerical integration of the position error
         integralError += positionError * ArmSimulation.DT;   //
@@ -80,26 +96,174 @@ public class ArmController implements RobotController
         // P.I.D
         torque = p_gain.getDoubleValue() * positionError +
                 i_gain.getDoubleValue() * integralError +
-                d_gain.getDoubleValue() * (0 - robot.getFulcrumAngularVelocity());
+                d_gain.getDoubleValue() * (0 - robot.getLRotatorAngularVelocity());
 
-
-        robot.setFulcrumTorque(torque);
+        robot.setLRotatorTorque(torque);
     }
-
-    public void secondController()
+    public void RRotatorController()
     {
         // ERROR term: Compute the difference between the desired position the pendulum and its current position
-        positionError = (desiredPositionRadians.getDoubleValue() * .25) - robot.getSecondAngularPosition();
+        positionError = (desiredPositionRadians.getDoubleValue() * .25) - robot.getRRotatorAngularPosition();
 
         // INTEGRAL term: Compute a simple numerical integration of the position error
         integralError += positionError * ArmSimulation.DT;   //
 
         // P.I.D
-        torque = p_sec.getDoubleValue() * positionError +
-                i_sec.getDoubleValue() * integralError +
-                d_sec.getDoubleValue() * (0 - robot.getSecondAngularVelocity());
+        torque = p_gain.getDoubleValue() * positionError +
+                i_gain.getDoubleValue() * integralError +
+                d_gain.getDoubleValue() * (0 - robot.getRRotatorAngularVelocity());
 
-        robot.setSecondTorque(torque);
+        robot.setRRotatorTorque(torque);
+    }
+    public void LFlapperController()
+    {
+        // ERROR term: Compute the difference between the desired position the pendulum and its current position
+        positionError = (desiredPositionRadians.getDoubleValue() * .25) - robot.getLFlapperAngularPosition();
+
+        // INTEGRAL term: Compute a simple numerical integration of the position error
+        integralError += positionError * ArmSimulation.DT;   //
+
+        // P.I.D
+        torque = p_gain.getDoubleValue() * positionError +
+                i_gain.getDoubleValue() * integralError +
+                d_gain.getDoubleValue() * (0 - robot.getLFlapperAngularVelocity());
+
+        robot.setLFlapperTorque(torque);
+    }
+    public void RFlapperController()
+    {
+        // ERROR term: Compute the difference between the desired position the pendulum and its current position
+        positionError = (desiredPositionRadians.getDoubleValue() * .25) - robot.getRFlapperAngularPosition();
+
+        // INTEGRAL term: Compute a simple numerical integration of the position error
+        integralError += positionError * ArmSimulation.DT;   //
+
+        // P.I.D
+        torque = p_gain.getDoubleValue() * positionError +
+                i_gain.getDoubleValue() * integralError +
+                d_gain.getDoubleValue() * (0 - robot.getRFlapperAngularVelocity());
+
+        robot.setRFlapperTorque(torque);
+    }
+    public void LElbowController()
+    {
+        // ERROR term: Compute the difference between the desired position the pendulum and its current position
+        positionError = (desiredPositionRadians.getDoubleValue() * .25) - robot.getLElbowAngularPosition();
+
+        // INTEGRAL term: Compute a simple numerical integration of the position error
+        integralError += positionError * ArmSimulation.DT;   //
+
+        // P.I.D
+        torque = p_gain.getDoubleValue() * positionError +
+                i_gain.getDoubleValue() * integralError +
+                d_gain.getDoubleValue() * (0 - robot.getLElbowAngularVelocity());
+
+        robot.setLElbowTorque(torque);
+    }
+    public void RElbowController()
+    {
+        // ERROR term: Compute the difference between the desired position the pendulum and its current position
+        positionError = (desiredPositionRadians.getDoubleValue() * .25) - robot.getRElbowAngularPosition();
+
+        // INTEGRAL term: Compute a simple numerical integration of the position error
+        integralError += positionError * ArmSimulation.DT;   //
+
+        // P.I.D
+        torque = p_gain.getDoubleValue() * positionError +
+                i_gain.getDoubleValue() * integralError +
+                d_gain.getDoubleValue() * (0 - robot.getRElbowAngularVelocity());
+
+        robot.setRElbowTorque(torque);
+    }
+    public void LHipController()
+    {
+        // ERROR term: Compute the difference between the desired position the pendulum and its current position
+        positionError = (desiredPositionRadians.getDoubleValue() * .25) - robot.getLHipAngularPosition();
+
+        // INTEGRAL term: Compute a simple numerical integration of the position error
+        integralError += positionError * ArmSimulation.DT;   //
+
+        // P.I.D
+        torque = p_gain.getDoubleValue() * positionError +
+                i_gain.getDoubleValue() * integralError +
+                d_gain.getDoubleValue() * (0 - robot.getLHipAngularVelocity());
+
+        robot.setLHipTorque(torque);
+    }
+    public void RHipController()
+    {
+        // ERROR term: Compute the difference between the desired position the pendulum and its current position
+        positionError = (desiredPositionRadians.getDoubleValue() * .25) - robot.getRHipAngularPosition();
+
+        // INTEGRAL term: Compute a simple numerical integration of the position error
+        integralError += positionError * ArmSimulation.DT;   //
+
+        // P.I.D
+        torque = p_gain.getDoubleValue() * positionError +
+                i_gain.getDoubleValue() * integralError +
+                d_gain.getDoubleValue() * (0 - robot.getRHipAngularVelocity());
+
+        robot.setRHipTorque(torque);
+    }
+    public void LKneeController()
+    {
+        // ERROR term: Compute the difference between the desired position the pendulum and its current position
+        positionError = (desiredPositionRadians.getDoubleValue() * .25) - robot.getLKneeAngularPosition();
+
+        // INTEGRAL term: Compute a simple numerical integration of the position error
+        integralError += positionError * ArmSimulation.DT;   //
+
+        // P.I.D
+        torque = p_gain.getDoubleValue() * positionError +
+                i_gain.getDoubleValue() * integralError +
+                d_gain.getDoubleValue() * (0 - robot.getLKneeAngularVelocity());
+
+        robot.setLKneeTorque(torque);
+    }
+    public void RKneeController()
+    {
+        // ERROR term: Compute the difference between the desired position the pendulum and its current position
+        positionError = (desiredPositionRadians.getDoubleValue() * .25) - robot.getRKneeAngularPosition();
+
+        // INTEGRAL term: Compute a simple numerical integration of the position error
+        integralError += positionError * ArmSimulation.DT;   //
+
+        // P.I.D
+        torque = p_gain.getDoubleValue() * positionError +
+                i_gain.getDoubleValue() * integralError +
+                d_gain.getDoubleValue() * (0 - robot.getRKneeAngularVelocity());
+
+        robot.setRKneeTorque(torque);
+    }
+    public void LAnkleController()
+    {
+        // ERROR term: Compute the difference between the desired position the pendulum and its current position
+        positionError = (desiredPositionRadians.getDoubleValue() * .25) - robot.getLAnkleAngularPosition();
+
+        // INTEGRAL term: Compute a simple numerical integration of the position error
+        integralError += positionError * ArmSimulation.DT;   //
+
+        // P.I.D
+        torque = p_gain.getDoubleValue() * positionError +
+                i_gain.getDoubleValue() * integralError +
+                d_gain.getDoubleValue() * (0 - robot.getLAnkleAngularVelocity());
+
+        robot.setLAnkleTorque(torque);
+    }
+    public void RAnkleController()
+    {
+        // ERROR term: Compute the difference between the desired position the pendulum and its current position
+        positionError = (desiredPositionRadians.getDoubleValue() * .25) - robot.getRAnkleAngularPosition();
+
+        // INTEGRAL term: Compute a simple numerical integration of the position error
+        integralError += positionError * ArmSimulation.DT;   //
+
+        // P.I.D
+        torque = p_gain.getDoubleValue() * positionError +
+                i_gain.getDoubleValue() * integralError +
+                d_gain.getDoubleValue() * (0 - robot.getRAnkleAngularVelocity());
+
+        robot.setRAnkleTorque(torque);
     }
 
     public YoVariableRegistry getYoVariableRegistry()
