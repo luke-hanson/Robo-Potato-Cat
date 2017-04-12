@@ -70,7 +70,6 @@ public class ArmRobot extends Robot
         //` a. Call parent class "Robot" constructor. The string "SimplePendulum" will be the name of the robot.
         super("JD");
 
-        //brought back the old one because he can stand now!
         FloatingJoint rootJoint = new FloatingJoint("FulcrumPin", new Vector3d(), this);
         rootJoint.setPosition(0, 0,3);
 
@@ -633,7 +632,7 @@ public class ArmRobot extends Robot
         return servo;
     }
 
-    private Link testSphereFootR()
+    private Link testSphereFootR()//made his feet appear bigger
     {
         Link servo = new Link("servoPin");
         servo.setMomentOfInertia(FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X);
@@ -642,8 +641,8 @@ public class ArmRobot extends Robot
         Graphics3DObject servoHeadGraphics = new Graphics3DObject();
 
         servoHeadGraphics.addSphere(.25, YoAppearance.Gray());
-        servoHeadGraphics.translate(0.12, -0.22, -0.625*INCH_TO_MILLIMETER);
-        servoHeadGraphics.addHemiEllipsoid(0.4, 0.7, 0.4, YoAppearance.White());
+        servoHeadGraphics.translate(0.19, -0.22, -0.625*INCH_TO_MILLIMETER);
+        servoHeadGraphics.addHemiEllipsoid(0.6, 0.9, 0.4, YoAppearance.White());
         servo.setLinkGraphics(servoHeadGraphics);
 
         return servo;
@@ -658,8 +657,8 @@ public class ArmRobot extends Robot
         Graphics3DObject servoHeadGraphics = new Graphics3DObject();
 
         servoHeadGraphics.addSphere(.25, YoAppearance.Gray());
-        servoHeadGraphics.translate(-0.12, -0.22, -0.625*INCH_TO_MILLIMETER);
-        servoHeadGraphics.addHemiEllipsoid(.4, .7, .4, YoAppearance.White());
+        servoHeadGraphics.translate(-0.19, -0.22, -0.625*INCH_TO_MILLIMETER);
+        servoHeadGraphics.addHemiEllipsoid(.6, .9, .4, YoAppearance.White());
         servo.setLinkGraphics(servoHeadGraphics);
 
         return servo;
