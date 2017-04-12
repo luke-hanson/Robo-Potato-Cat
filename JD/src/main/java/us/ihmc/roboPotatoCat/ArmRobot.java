@@ -70,8 +70,12 @@ public class ArmRobot extends Robot
         //` a. Call parent class "Robot" constructor. The string "SimplePendulum" will be the name of the robot.
         super("JD");
 
-        FloatingPlanarJoint rootJoint = new FloatingPlanarJoint("FulcrumPin", this, XZ);
-        rootJoint.changeOffsetVector(0, 0, 2.65); //2.65 is right at ground
+        //brought back the old one because he can stand now!
+        FloatingJoint rootJoint = new FloatingJoint("FulcrumPin", new Vector3d(), this);
+        rootJoint.setPosition(0, 0,3);
+
+//        FloatingPlanarJoint rootJoint = new FloatingPlanarJoint("FulcrumPin", this, XZ);
+//        rootJoint.changeOffsetVector(0, 0, 3); //2.65 is right at ground
 
         //instantiate new joints here - the vector3d is the point in space that the new part exists(i think)
         PinJoint rightShoulderRotator = new PinJoint("rightShoulderRotator", new Vector3d(3*INCH_TO_MILLIMETER, 0.0, .75), this, Axis.X);//make sure to measure jd and adjust these Zs
