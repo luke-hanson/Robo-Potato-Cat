@@ -2,6 +2,7 @@ package us.ihmc.roboPotatoCat;
 
 import us.ihmc.robotics.dataStructures.registry.YoVariableRegistry;
 import us.ihmc.robotics.dataStructures.variable.DoubleYoVariable;
+import us.ihmc.robotics.dataStructures.variable.IntegerYoVariable;
 import us.ihmc.simulationconstructionset.robotController.RobotController;
 
 
@@ -23,6 +24,8 @@ public class ArmController implements RobotController
 
     // Controller parameter variables
     private DoubleYoVariable p_gain, d_gain, i_gain;
+
+    private IntegerYoVariable RRotUp;
 
 //    private DoubleYoVariable p_LRot, d_LRot, i_LRot;
 //    private DoubleYoVariable p_RRot, d_RRot, i_RRot;
@@ -59,6 +62,9 @@ public class ArmController implements RobotController
         d_gain.set(100.0);
         i_gain = new DoubleYoVariable("IntegralGain", registry);
         i_gain.set(10.0);
+
+        RRotUp = new IntegerYoVariable("RRotUp", registry);
+        RRotUp.set(0);
     }
 
     public void initialize()
@@ -88,7 +94,7 @@ public class ArmController implements RobotController
     public void LRotatorController()
     {
         // ERROR term: Compute the difference between the desired position the pendulum and its current position
-        positionError = (desiredPositionRadians.getDoubleValue() * .25) - robot.getLRotatorAngularPosition();
+        positionError = (desiredPositionRadians.getDoubleValue()) - robot.getLRotatorAngularPosition();
 
         // INTEGRAL term: Compute a simple numerical integration of the position error
         integralError += positionError * ArmSimulation.DT;   //
@@ -103,7 +109,14 @@ public class ArmController implements RobotController
     public void RRotatorController()
     {
         // ERROR term: Compute the difference between the desired position the pendulum and its current position
-        positionError = (desiredPositionRadians.getDoubleValue() * .25) - robot.getRRotatorAngularPosition();
+        if(RRotUp.getIntegerValue() == 1)//we can tell him to move his arm!
+        {
+            positionError = -1*(desiredPositionRadians.getDoubleValue()) - robot.getRRotatorAngularPosition();
+        }
+        else
+        {
+            positionError = (0) - robot.getRRotatorAngularPosition();
+        }
 
         // INTEGRAL term: Compute a simple numerical integration of the position error
         integralError += positionError * ArmSimulation.DT;   //
@@ -178,7 +191,7 @@ public class ArmController implements RobotController
     public void LHipController()
     {
         // ERROR term: Compute the difference between the desired position the pendulum and its current position
-        positionError = (desiredPositionRadians.getDoubleValue() * .25) - robot.getLHipAngularPosition();
+        positionError = (0) - robot.getLHipAngularPosition();
 
         // INTEGRAL term: Compute a simple numerical integration of the position error
         integralError += positionError * ArmSimulation.DT;   //
@@ -193,7 +206,7 @@ public class ArmController implements RobotController
     public void RHipController()
     {
         // ERROR term: Compute the difference between the desired position the pendulum and its current position
-        positionError = (desiredPositionRadians.getDoubleValue() * .25) - robot.getRHipAngularPosition();
+        positionError = (0) - robot.getRHipAngularPosition();
 
         // INTEGRAL term: Compute a simple numerical integration of the position error
         integralError += positionError * ArmSimulation.DT;   //
@@ -208,7 +221,7 @@ public class ArmController implements RobotController
     public void LKneeController()
     {
         // ERROR term: Compute the difference between the desired position the pendulum and its current position
-        positionError = (desiredPositionRadians.getDoubleValue() * .25) - robot.getLKneeAngularPosition();
+        positionError = (0) - robot.getLKneeAngularPosition();
 
         // INTEGRAL term: Compute a simple numerical integration of the position error
         integralError += positionError * ArmSimulation.DT;   //
@@ -223,7 +236,7 @@ public class ArmController implements RobotController
     public void RKneeController()
     {
         // ERROR term: Compute the difference between the desired position the pendulum and its current position
-        positionError = (desiredPositionRadians.getDoubleValue() * .25) - robot.getRKneeAngularPosition();
+        positionError = (0) - robot.getRKneeAngularPosition();
 
         // INTEGRAL term: Compute a simple numerical integration of the position error
         integralError += positionError * ArmSimulation.DT;   //
@@ -238,7 +251,7 @@ public class ArmController implements RobotController
     public void LAnkleController()
     {
         // ERROR term: Compute the difference between the desired position the pendulum and its current position
-        positionError = (desiredPositionRadians.getDoubleValue() * .25) - robot.getLAnkleAngularPosition();
+        positionError = (0) - robot.getLAnkleAngularPosition();
 
         // INTEGRAL term: Compute a simple numerical integration of the position error
         integralError += positionError * ArmSimulation.DT;   //
@@ -253,7 +266,7 @@ public class ArmController implements RobotController
     public void RAnkleController()
     {
         // ERROR term: Compute the difference between the desired position the pendulum and its current position
-        positionError = (desiredPositionRadians.getDoubleValue() * .25) - robot.getRAnkleAngularPosition();
+        positionError = (0) - robot.getRAnkleAngularPosition();
 
         // INTEGRAL term: Compute a simple numerical integration of the position error
         integralError += positionError * ArmSimulation.DT;   //
