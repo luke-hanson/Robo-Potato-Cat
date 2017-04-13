@@ -26,6 +26,10 @@ public class ArmController implements RobotController
     private DoubleYoVariable p_gain, d_gain, i_gain;
 
     private IntegerYoVariable RRotUp;
+    private IntegerYoVariable LRotUp;
+
+    private int iR = 0;
+    private int iL = 0;
 
 //    private DoubleYoVariable p_LRot, d_LRot, i_LRot;
 //    private DoubleYoVariable p_RRot, d_RRot, i_RRot;
@@ -65,6 +69,8 @@ public class ArmController implements RobotController
 
         RRotUp = new IntegerYoVariable("RRotUp", registry);
         RRotUp.set(0);
+        LRotUp = new IntegerYoVariable("LRotUp", registry);
+        LRotUp.set(0);
     }
 
     public void initialize()
@@ -94,8 +100,14 @@ public class ArmController implements RobotController
     public void LRotatorController()
     {
         // ERROR term: Compute the difference between the desired position the pendulum and its current position
-        positionError = (desiredPositionRadians.getDoubleValue()) - robot.getLRotatorAngularPosition();
-
+        if(LRotUp.getIntegerValue() == 1)
+        {
+            positionError = (0) - robot.getLRotatorAngularPosition();
+        }
+        else
+        {
+            positionError = (desiredPositionRadians.getDoubleValue()) - robot.getLRotatorAngularPosition();
+        }
         // INTEGRAL term: Compute a simple numerical integration of the position error
         integralError += positionError * ArmSimulation.DT;   //
 
@@ -109,7 +121,7 @@ public class ArmController implements RobotController
     public void RRotatorController()
     {
         // ERROR term: Compute the difference between the desired position the pendulum and its current position
-        if(RRotUp.getIntegerValue() == 1)//we can tell him to move his arm!
+        if(RRotUp.getIntegerValue() == 1)
         {
             positionError = -1*(desiredPositionRadians.getDoubleValue()) - robot.getRRotatorAngularPosition();
         }
@@ -161,7 +173,32 @@ public class ArmController implements RobotController
     public void LElbowController()
     {
         // ERROR term: Compute the difference between the desired position the pendulum and its current position
-        positionError = (desiredPositionRadians.getDoubleValue() * .25) - robot.getLElbowAngularPosition();
+        if(LRotUp.getIntegerValue() == 1)
+        {
+            if (iL == 1000)
+            {
+                iL = 2000;
+            }
+            else if (iL == 1001)
+            {
+                iL = 0;
+            }
+            if (iL > 1000)
+            {
+
+                positionError = (desiredPositionRadians.getDoubleValue()*0.25) - (robot.getLElbowAngularPosition());
+                iL--;
+            }
+            if (iL < 1000)
+            {
+                positionError = (desiredPositionRadians.getDoubleValue()*0.5) - (robot.getLElbowAngularPosition());
+                iL++;
+            }
+        }
+        else
+        {
+            positionError = (desiredPositionRadians.getDoubleValue() * 0.25) - robot.getLElbowAngularPosition();
+        }
 
         // INTEGRAL term: Compute a simple numerical integration of the position error
         integralError += positionError * ArmSimulation.DT;   //
@@ -176,7 +213,32 @@ public class ArmController implements RobotController
     public void RElbowController()
     {
         // ERROR term: Compute the difference between the desired position the pendulum and its current position
-        positionError = (desiredPositionRadians.getDoubleValue() * .25) - robot.getRElbowAngularPosition();
+        if(RRotUp.getIntegerValue() == 1)
+        {
+            if (iR == 1000)
+            {
+                iR = 2000;
+            }
+            else if (iR == 1001)
+            {
+                iR = 0;
+            }
+            if (iR > 1000)
+            {
+
+                positionError = (desiredPositionRadians.getDoubleValue()*.25) - (robot.getRElbowAngularPosition());
+                iR--;
+            }
+            if (iR < 1000)
+            {
+                positionError = (desiredPositionRadians.getDoubleValue()*0.5) - (robot.getRElbowAngularPosition());
+                iR++;
+            }
+        }
+        else
+        {
+            positionError = (desiredPositionRadians.getDoubleValue() * 0.25) - robot.getRElbowAngularPosition();
+        }
 
         // INTEGRAL term: Compute a simple numerical integration of the position error
         integralError += positionError * ArmSimulation.DT;   //
