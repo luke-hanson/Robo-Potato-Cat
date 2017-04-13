@@ -23,7 +23,7 @@ public class ArmSimulation
         sim = new SimulationConstructionSet(robot, parameters);
         sim.setDT(DT, 20);
         sim.setGroundVisible(true);
-        sim.setCameraPosition(0, -9.0, 0.6);
+        sim.setCameraPosition(0, -50.0, 8);
         sim.setCameraFix(0.0, 0.0, 0.70);
 
         sim.setSimulateDuration(60.0); // sets the simulation duration to 60 seconds
