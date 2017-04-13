@@ -632,7 +632,7 @@ public class ArmRobot extends Robot
         return servo;
     }
 
-    private Link testSphereFootR()//made his feet appear bigger
+    private Link testSphereFootR()
     {
         Link servo = new Link("servoPin");
         servo.setMomentOfInertia(FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X);
@@ -642,7 +642,7 @@ public class ArmRobot extends Robot
 
         servoHeadGraphics.addSphere(.25, YoAppearance.Gray());
         servoHeadGraphics.translate(0.19, -0.22, -0.625*INCH_TO_MILLIMETER);
-        servoHeadGraphics.addHemiEllipsoid(0.6, 0.9, 0.4, YoAppearance.White());
+        servoHeadGraphics.addHemiEllipsoid(0.55, 0.85, 0.4, YoAppearance.White());
         servo.setLinkGraphics(servoHeadGraphics);
 
         return servo;
@@ -658,7 +658,7 @@ public class ArmRobot extends Robot
 
         servoHeadGraphics.addSphere(.25, YoAppearance.Gray());
         servoHeadGraphics.translate(-0.19, -0.22, -0.625*INCH_TO_MILLIMETER);
-        servoHeadGraphics.addHemiEllipsoid(.6, .9, .4, YoAppearance.White());
+        servoHeadGraphics.addHemiEllipsoid(.55, .85, .4, YoAppearance.White());
         servo.setLinkGraphics(servoHeadGraphics);
 
         return servo;
