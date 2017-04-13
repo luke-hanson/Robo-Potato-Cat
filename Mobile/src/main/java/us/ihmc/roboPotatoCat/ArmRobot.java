@@ -1,12 +1,14 @@
 package us.ihmc.roboPotatoCat;
 
+import us.ihmc.graphics3DAdapter.GroundProfile3D;
 import us.ihmc.graphics3DAdapter.graphics.Graphics3DObject;
 import us.ihmc.graphics3DAdapter.graphics.appearances.YoAppearance;
 import us.ihmc.robotics.Axis;
 import us.ihmc.robotics.dataStructures.variable.DoubleYoVariable;
-import us.ihmc.simulationconstructionset.Link;
-import us.ihmc.simulationconstructionset.PinJoint;
-import us.ihmc.simulationconstructionset.Robot;
+import us.ihmc.simulationconstructionset.*;
+import us.ihmc.simulationconstructionset.util.LinearGroundContactModel;
+import us.ihmc.simulationconstructionset.util.ground.FlatGroundProfile;
+import us.ihmc.simulationconstructionset.util.ground.WavyGroundProfile;
 
 import javax.vecmath.Vector3d;
 
@@ -20,6 +22,7 @@ public class ArmRobot extends Robot
     /*
        Define the parameters of the robot
     */
+
     public static final double ROD_LENGTH = 1.0;
     public static final double ROD_RADIUS = 0.01;
     public static final double ROD_MASS = 0.00;
@@ -29,7 +32,7 @@ public class ArmRobot extends Robot
     public static final double BALL_RADIUS = 0.05;
     public static final double BALL_MASS = 1.0;
 
-    public static final double FULCRUM_MOMENT_OF_INERTIA_ABOUT_Y =
+    public static final double FULCRUM_MOMENT_OF_INERTIA_ABOUT_X =
             ROD_LENGTH * ROD_LENGTH * BALL_MASS; // I = mrˆ2 pendulum's resistance to changes to its rotation in  kg.mˆ2
 
    /*
@@ -49,35 +52,98 @@ public class ArmRobot extends Robot
      */
     public ArmRobot()
     {
+
         //` a. Call parent class "Robot" constructor. The string "SimplePendulum" will be the name of the robot.
-        super("pendulum");
+        super("JD");
 
+        FloatingJoint rootJoint = new FloatingJoint("FulcrumPin", new Vector3d(), this);
+        rootJoint.setPosition(0, 0,3);
+        //PinJoint rootJoint = new PinJoint("rootJoint", new Vector3d(2.0, 0.0, 2.3125), this, Axis.X);
+
+        PinJoint rightShoulderRotator = new PinJoint("q1", new Vector3d(2.0, 0.0, 2.3125), this, Axis.X);
+        PinJoint leftShoulderRotator = new PinJoint("q2", new Vector3d(-2.0, 0.0, 2.3125), this, Axis.X);
+        PinJoint leftHip = new PinJoint("q3", new Vector3d(-0.875, 0.0, -2.4375), this, Axis.X);
+        PinJoint rightHip = new PinJoint("q4", new Vector3d(0.875, 0.0, -2.4375), this, Axis.X);
+
+
+        rightShoulderRotator.setDamping(0.3);
+        leftShoulderRotator.setDamping(0.3);
+        leftHip.setDamping(0.3);
+        rightHip.setDamping(0.3);
+
+
+        Link rightShoulderRotatorLink = secondLink();
+        Link leftShoulderRotatorLink = secondLink();
+        Link leftHipLink = secondLink();
+        Link rightHipLink = secondLink();
+
+        rootJoint.setLink(rightShoulderRotatorLink);
+        rootJoint.setLink(leftShoulderRotatorLink);
+        rootJoint.setLink(leftHipLink);
+        rootJoint.setLink(rightHipLink);
+
+        rightShoulderRotator.setLink(secondLink());
+        leftShoulderRotator.setLink(secondLink());
+        leftHip.setLink(secondLink());
+        rightHip.setLink(secondLink());
+
+        rootJoint.addJoint(rightShoulderRotator);
+        rootJoint.addJoint(leftShoulderRotator);
+        rootJoint.addJoint(leftHip);
+        rootJoint.addJoint(rightHip);
+        rightShoulderRotator.setInitialState(fulcrumInitialPositionRadians, fulcrumInitialVelocity);
+
+        rootJoint.setLink(coreGraphic());
+        this.addRootJoint(rootJoint);
         // b. Add a joint to the robot
-        PinJoint fulcrumPinJoint = new PinJoint("FulcrumPin", new Vector3d(0.0, 0.0, 1.25), this, Axis.Y);
-        PinJoint secondPinJoint = new PinJoint("SecondPin", new Vector3d(0.0, 0.0, -ROD_LENGTH), this, Axis.Y);
+//        PinJoint fulcrumPinJoint = new PinJoint("FulcrumPin", new Vector3d(0.0, 0.0, 1.25), this, Axis.Y);
+//        PinJoint secondPinJoint = new PinJoint("SecondPin", new Vector3d(0.0, 0.0, -ROD_LENGTH), this, Axis.Y);
+//        PinJoint zPinJoint = new PinJoint("zPin", new Vector3d(0.0, 0.0, 0.0), this, Axis.X);
+//
+//        fulcrumPinJoint.setInitialState(fulcrumInitialPositionRadians, fulcrumInitialVelocity);
+//        fulcrumPinJoint.setDamping(0.3);
+//
+//        zPinJoint.setInitialState(fulcrumInitialPositionRadians, fulcrumInitialVelocity);
+//
+//        Link secondLink = secondLink();
+//        fulcrumPinJoint.setLink(secondLink);// pendulumLink() method defined next.
+//
+//        Link coreGraphic = coreGraphic();
+//        fulcrumPinJoint.setLink(coreGraphic);// pendulumLink() method defined next.
+//
+//
+//
+//        secondPinJoint.setInitialState(-fulcrumInitialPositionRadians, fulcrumInitialVelocity);
+//        secondPinJoint.setLink(pendulumLink());// pendulumLink() method defined next.
+//        secondPinJoint.setDamping(0.3);
+//
+//        zPinJoint.setInitialState(-fulcrumInitialPositionRadians, fulcrumInitialVelocity);
+//        zPinJoint.setLink(pendulumLink());// pendulumLink() method defined next.
+//        zPinJoint.setDamping(0.3);
+//
+//        q_fulcrum = fulcrumPinJoint.getQ();
+//        qd_fulcrum = fulcrumPinJoint.getQD();
+//        tau_fulcrum = fulcrumPinJoint.getTau();
+//
+//        q_Second = secondPinJoint.getQ();
+//        qd_Second = secondPinJoint.getQD();
+//        tau_Second = secondPinJoint.getTau();
+//
+//        fulcrumPinJoint.addJoint(secondPinJoint);
+//
+//        fulcrumPinJoint.addJoint(zPinJoint);
+//
+//        this.addRootJoint(fulcrumPinJoint);
 
-        fulcrumPinJoint.setInitialState(fulcrumInitialPositionRadians, fulcrumInitialVelocity);
-        Link secondLink = secondLink();
-        fulcrumPinJoint.setLink(secondLink);// pendulumLink() method defined next.
-        fulcrumPinJoint.setDamping(0.3);
+        GroundContactPoint groundContactPoint = new GroundContactPoint("rootJointGcp", this);
+        rightShoulderRotator.addGroundContactPoint(groundContactPoint);
 
-        secondPinJoint.setInitialState(-fulcrumInitialPositionRadians, fulcrumInitialVelocity);
-        secondPinJoint.setLink(pendulumLink());// pendulumLink() method defined next.
-        secondPinJoint.setDamping(0.3);
+        GroundContactModel groundModel = new LinearGroundContactModel(this, 1422, 150.6, 50.0, 1000.0,
+                this.getRobotsYoVariableRegistry());
 
-        q_fulcrum = fulcrumPinJoint.getQ();
-        qd_fulcrum = fulcrumPinJoint.getQD();
-        tau_fulcrum = fulcrumPinJoint.getTau();
-
-        q_Second = secondPinJoint.getQ();
-        qd_Second = secondPinJoint.getQD();
-        tau_Second = secondPinJoint.getTau();
-
-        fulcrumPinJoint.addJoint(secondPinJoint);
-
-        this.addRootJoint(fulcrumPinJoint);
-
-        //this.addRootJoint(secondPinJoint);
+        GroundProfile3D profile = new FlatGroundProfile();
+        groundModel.setGroundProfile3D(profile);
+        this.setGroundContactModel(groundModel);
     }
 
     /**
@@ -88,6 +154,7 @@ public class ArmRobot extends Robot
     {
         return q_fulcrum.getDoubleValue();
     }
+
     public double getSecondAngularPosition()
     {
         return q_Second.getDoubleValue();
@@ -135,7 +202,7 @@ public class ArmRobot extends Robot
     private Link pendulumLink()
     {
         Link pendulumLink = new Link("PendulumLink");
-        pendulumLink.setMomentOfInertia(0.0, FULCRUM_MOMENT_OF_INERTIA_ABOUT_Y, 0.0);
+        pendulumLink.setMomentOfInertia(FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X);
         pendulumLink.setMass(BALL_MASS);
         pendulumLink.setComOffset(0.0, 0.0, -ROD_LENGTH);
 
@@ -150,19 +217,43 @@ public class ArmRobot extends Robot
     }
     private Link secondLink()
     {
-        Link pendulumLink = new Link("PendulumLink");
-        pendulumLink.setMomentOfInertia(0.0, FULCRUM_MOMENT_OF_INERTIA_ABOUT_Y, 0.0);
+        Link pendulumLink = new Link("FulcrumPin");
+        pendulumLink.setMomentOfInertia(FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X);
         pendulumLink.setMass(BALL_MASS);
-        pendulumLink.setComOffset(0.0, 0.0, -ROD_LENGTH);
+        //pendulumLink.setComOffset(0.0, 0.0, -ROD_LENGTH);
 
         Graphics3DObject pendulumGraphics = new Graphics3DObject();
-        pendulumGraphics.addSphere(FULCRUM_RADIUS, YoAppearance.BlueViolet());
-        pendulumGraphics.translate(0.0, 0.0, -ROD_LENGTH);
-        pendulumGraphics.addCylinder(ROD_LENGTH, ROD_RADIUS, YoAppearance.Black());
-        pendulumGraphics.addSphere(BALL_RADIUS, YoAppearance.Chartreuse());
+        //pendulumGraphics.addSphere(FULCRUM_RADIUS, YoAppearance.BlueViolet());
+        //pendulumGraphics.translate(0.0, 0.0, 0.0);
+        pendulumGraphics.addCylinder(ROD_LENGTH, ROD_RADIUS, YoAppearance.AliceBlue());
+        pendulumGraphics.rotate((Math.PI/2), Axis.Y);
+        pendulumGraphics.addCylinder(ROD_LENGTH*.1, ROD_RADIUS*8, YoAppearance.Black());
+        //pendulumGraphics.addCube(ROD_LENGTH, ROD_RADIUS, ROD_RADIUS, YoAppearance.LemonChiffon());
+
+
+        //pendulumGraphics.addCoordinateSystem(1);
+        //pendulumGraphics.addTeaPot(YoAppearance.PapayaWhip());
+        //pendulumGraphics.addSphere(BALL_RADIUS, YoAppearance.Chartreuse());
+
+
         pendulumLink.setLinkGraphics(pendulumGraphics);
 
         return pendulumLink;
     }
+    private Link coreGraphic()
+    {
+        Link pendulumLink = new Link("PendulumLink");
+        pendulumLink.setMomentOfInertia(FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X);
+        pendulumLink.setMass(BALL_MASS);
+        pendulumLink.setComOffset(0.0, 0.0, -ROD_LENGTH);
 
+        Graphics3DObject pendulumGraphics = new Graphics3DObject();
+        pendulumGraphics.addSphere(BALL_RADIUS*5, YoAppearance.Magenta());
+        pendulumGraphics.translate(0.0, 0.0, -ROD_LENGTH);
+        //pendulumGraphics.addCylinder(ROD_LENGTH, ROD_RADIUS, YoAppearance.Black());
+        //pendulumGraphics.addSphere(BALL_RADIUS, YoAppearance.Chartreuse());
+        pendulumLink.setLinkGraphics(pendulumGraphics);
+
+        return pendulumLink;
+    }
 }
