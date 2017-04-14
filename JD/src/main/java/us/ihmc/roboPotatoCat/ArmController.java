@@ -27,9 +27,16 @@ public class ArmController implements RobotController
 
     private IntegerYoVariable RRotUp;
     private IntegerYoVariable LRotUp;
+    private IntegerYoVariable crouch;
 
     private int iR = 0;
     private int iL = 0;
+    private DoubleYoVariable iLCrouchHip;
+    private DoubleYoVariable iRCrouchHip;
+    private DoubleYoVariable iLCrouchKnee;
+    private DoubleYoVariable iRCrouchKnee;
+
+    private double theNumberWeAreCountingUpTo = 5000;
 
 //    private DoubleYoVariable p_LRot, d_LRot, i_LRot;
 //    private DoubleYoVariable p_RRot, d_RRot, i_RRot;
@@ -48,8 +55,6 @@ public class ArmController implements RobotController
 
     // This is the desired torque that we will apply to the fulcrum joint (PinJoint)
     private double torque;
-
-    public double temp = 10;
 
     /* Constructor:
        Where we instantiate and initialize control variables
@@ -71,6 +76,17 @@ public class ArmController implements RobotController
         RRotUp.set(0);
         LRotUp = new IntegerYoVariable("LRotUp", registry);
         LRotUp.set(0);
+        crouch = new IntegerYoVariable("crouch", registry);
+        crouch.set(0);
+
+        iLCrouchHip = new DoubleYoVariable("iLCrouchHip", registry);
+        iLCrouchHip.set(1);
+        iRCrouchHip = new DoubleYoVariable("iRCrouchHip", registry);
+        iRCrouchHip.set(1);
+        iLCrouchKnee = new DoubleYoVariable("iLCrouchKnee", registry);
+        iLCrouchKnee.set(1);
+        iRCrouchKnee = new DoubleYoVariable("iRCrouchKnee", registry);
+        iRCrouchKnee.set(1);
     }
 
     public void initialize()
@@ -100,7 +116,7 @@ public class ArmController implements RobotController
     public void LRotatorController()
     {
         // ERROR term: Compute the difference between the desired position the pendulum and its current position
-        if(LRotUp.getIntegerValue() == 1)
+        if(LRotUp.getIntegerValue() != 0)
         {
             positionError = (0) - robot.getLRotatorAngularPosition();
         }
@@ -121,7 +137,7 @@ public class ArmController implements RobotController
     public void RRotatorController()
     {
         // ERROR term: Compute the difference between the desired position the pendulum and its current position
-        if(RRotUp.getIntegerValue() == 1)
+        if(RRotUp.getIntegerValue() != 0)
         {
             positionError = -1*(desiredPositionRadians.getDoubleValue()) - robot.getRRotatorAngularPosition();
         }
@@ -173,7 +189,7 @@ public class ArmController implements RobotController
     public void LElbowController()
     {
         // ERROR term: Compute the difference between the desired position the pendulum and its current position
-        if(LRotUp.getIntegerValue() == 1)
+        if(LRotUp.getIntegerValue() != 0)
         {
             if (iL == 1000)
             {
@@ -213,7 +229,7 @@ public class ArmController implements RobotController
     public void RElbowController()
     {
         // ERROR term: Compute the difference between the desired position the pendulum and its current position
-        if(RRotUp.getIntegerValue() == 1)
+        if(RRotUp.getIntegerValue() != 0)
         {
             if (iR == 1000)
             {
@@ -253,7 +269,23 @@ public class ArmController implements RobotController
     public void LHipController()
     {
         // ERROR term: Compute the difference between the desired position the pendulum and its current position
-        positionError = (0) - robot.getLHipAngularPosition();
+        if(crouch.getIntegerValue() != 0)
+        {
+            if(iLCrouchHip.getDoubleValue() < theNumberWeAreCountingUpTo)
+            {
+                positionError = -(((desiredPositionRadians.getDoubleValue())*(iLCrouchHip.getDoubleValue()/theNumberWeAreCountingUpTo))*0.75) - robot.getLHipAngularPosition();
+                iLCrouchHip.add(1);
+            }
+            else
+            {
+                positionError = -(desiredPositionRadians.getDoubleValue()*0.75) - robot.getLHipAngularPosition();
+            }
+        }
+        else
+        {
+            positionError = (desiredPositionRadians.getDoubleValue()*0) - robot.getLHipAngularPosition();
+            iLCrouchHip.set(0);
+        }
 
         // INTEGRAL term: Compute a simple numerical integration of the position error
         integralError += positionError * ArmSimulation.DT;   //
@@ -268,7 +300,24 @@ public class ArmController implements RobotController
     public void RHipController()
     {
         // ERROR term: Compute the difference between the desired position the pendulum and its current position
-        positionError = (0) - robot.getRHipAngularPosition();
+        if(crouch.getIntegerValue() != 0)
+        {
+            if(iRCrouchHip.getDoubleValue() < theNumberWeAreCountingUpTo)
+            {
+                positionError = -(((desiredPositionRadians.getDoubleValue())*(iRCrouchHip.getDoubleValue()/theNumberWeAreCountingUpTo))*0.75) - robot.getRHipAngularPosition();
+                iRCrouchHip.add(1);
+            }
+            else
+            {
+                positionError = -(desiredPositionRadians.getDoubleValue()*0.75) - robot.getRHipAngularPosition();
+
+            }
+        }
+        else
+        {
+            positionError = (desiredPositionRadians.getDoubleValue()*0) - robot.getRHipAngularPosition();
+            iRCrouchHip.set(0);
+        }
 
         // INTEGRAL term: Compute a simple numerical integration of the position error
         integralError += positionError * ArmSimulation.DT;   //
@@ -283,7 +332,24 @@ public class ArmController implements RobotController
     public void LKneeController()
     {
         // ERROR term: Compute the difference between the desired position the pendulum and its current position
-        positionError = (0) - robot.getLKneeAngularPosition();
+        if(crouch.getIntegerValue() != 0)
+        {
+            if(iLCrouchKnee.getDoubleValue() < theNumberWeAreCountingUpTo)
+            {
+                positionError = (((desiredPositionRadians.getDoubleValue()*((iLCrouchKnee.getDoubleValue()/theNumberWeAreCountingUpTo)))/2)) - robot.getLKneeAngularPosition();
+                iLCrouchKnee.add(1);
+            }
+            else
+            {
+                positionError = (desiredPositionRadians.getDoubleValue()*0.5) - robot.getLKneeAngularPosition();
+
+            }
+        }
+        else
+        {
+            positionError = (desiredPositionRadians.getDoubleValue()*0) - robot.getLKneeAngularPosition();
+            iLCrouchKnee.set(0);
+        }
 
         // INTEGRAL term: Compute a simple numerical integration of the position error
         integralError += positionError * ArmSimulation.DT;   //
@@ -298,7 +364,24 @@ public class ArmController implements RobotController
     public void RKneeController()
     {
         // ERROR term: Compute the difference between the desired position the pendulum and its current position
-        positionError = (0) - robot.getRKneeAngularPosition();
+        if(crouch.getIntegerValue() != 0)
+        {
+            if(iRCrouchKnee.getDoubleValue() < theNumberWeAreCountingUpTo)
+            {
+                positionError = ((desiredPositionRadians.getDoubleValue()*(((iRCrouchKnee.getDoubleValue()/theNumberWeAreCountingUpTo)))/2)) - robot.getLKneeAngularPosition();
+                iRCrouchKnee.add(1);
+            }
+            else
+            {
+                positionError = (desiredPositionRadians.getDoubleValue()*0.5) - robot.getLKneeAngularPosition();
+
+            }
+        }
+        else
+        {
+            positionError = (desiredPositionRadians.getDoubleValue()*0) - robot.getLKneeAngularPosition();
+            iRCrouchKnee.set(0);
+        }
 
         // INTEGRAL term: Compute a simple numerical integration of the position error
         integralError += positionError * ArmSimulation.DT;   //
