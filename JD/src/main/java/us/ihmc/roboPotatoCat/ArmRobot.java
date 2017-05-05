@@ -1,4 +1,4 @@
-package us.ihmc.roboPotatoCat;
+package us.ihmc.exampleSimulations.JD;
 
 import us.ihmc.graphics3DAdapter.GroundProfile3D;
 import us.ihmc.graphics3DAdapter.graphics.Graphics3DObject;
@@ -10,9 +10,6 @@ import us.ihmc.simulationconstructionset.util.LinearGroundContactModel;
 import us.ihmc.simulationconstructionset.util.ground.FlatGroundProfile;
 
 import javax.vecmath.Vector3d;
-
-import static us.ihmc.simulationconstructionset.FloatingPlanarJoint.XY;
-import static us.ihmc.simulationconstructionset.FloatingPlanarJoint.XZ;
 
 /**
  *
@@ -27,6 +24,7 @@ public class ArmRobot extends Robot
 
 
     public static final double SERVO_JOINT_LENGTH = 1; //1 = 60mm everything is extrapolated from that
+    //we multiply by INCH_TO_MILLIMETER to get however many inches we need
     public static final double INCH_TO_MILLIMETER = (1 * 25.4)/60;
     public static final double ROD_RADIUS = 0.01;
     public static final double ROD_MASS = 0.00;
@@ -44,8 +42,6 @@ public class ArmRobot extends Robot
     private double fulcrumInitialVelocity = 0.0;
 
     /* Some joint state variables */
-    ////NEED TO ADD OUR JOINTS SO THAT WE CAN MESS WITH THEM IN THE SIM
-    //YES
     private DoubleYoVariable tau_LRotator, q_LRotator, qd_LRotator; // Respectively Torque, Position, Velocity
     private DoubleYoVariable tau_RRotator, q_RRotator, qd_RRotator;
     private DoubleYoVariable tau_LFlapper, q_LFlapper, qd_LFlapper;
@@ -67,16 +63,18 @@ public class ArmRobot extends Robot
     public ArmRobot()
     {
 
-        //` a. Call parent class "Robot" constructor. The string "SimplePendulum" will be the name of the robot.
+        //our name
         super("JD");
 
+        //instantiating our root joint, located at the bottom center of JD's box body
         FloatingJoint rootJoint = new FloatingJoint("FulcrumPin", new Vector3d(), this);
         rootJoint.setPosition(0, 0,3);
 
+        //use this if you would like to put his root in a 2D planar
 //        FloatingPlanarJoint rootJoint = new FloatingPlanarJoint("FulcrumPin", this, XZ);
 //        rootJoint.changeOffsetVector(0, 0, 3); //2.65 is right at ground
 
-        //instantiate new joints here - the vector3d is the point in space that the new part exists(i think)
+        //instantiate new joints here - the vector3d is the point in space that the new part exists in in relation to the previous joint
         PinJoint rightShoulderRotator = new PinJoint("rightShoulderRotator", new Vector3d(3*INCH_TO_MILLIMETER, 0.0, .75), this, Axis.X);//make sure to measure jd and adjust these Zs
         PinJoint leftShoulderRotator = new PinJoint("leftShoulderRotator", new Vector3d(-3*INCH_TO_MILLIMETER, 0.0, 0.75), this, Axis.X);
         PinJoint rightShoulderFlapper = new PinJoint("rightShoulderFlapper", new Vector3d(0.0625*INCH_TO_MILLIMETER, 0.0, 0), this, Axis.Y);
@@ -108,6 +106,7 @@ public class ArmRobot extends Robot
         PinJoint l5 = new PinJoint("l5", new Vector3d(-1.75*INCH_TO_MILLIMETER, 0.0, -0.5*INCH_TO_MILLIMETER), this, Axis.Y);
         PinJoint l6 = new PinJoint("l6", new Vector3d(-1*INCH_TO_MILLIMETER, -3*INCH_TO_MILLIMETER, -0.5*INCH_TO_MILLIMETER), this, Axis.Y);
 
+        //limit stops are like controls, they create boundaries that the joints can't cross accidentally
         leftShoulderFlapper.setLimitStops(-Math.PI/2,Math.PI/2,10,50);
         leftElbow.setLimitStops(-Math.PI/2,Math.PI/2,10,50);
         rightShoulderFlapper.setLimitStops(-Math.PI/2,Math.PI/2,10,50);
@@ -136,7 +135,7 @@ public class ArmRobot extends Robot
         rightAnkle.setDamping(0.3);
         leftAnkle.setDamping(0.3);
 
-        //assign a graphic
+        //assign a graphic and mass
         rightShoulderRotator.setLink(servoPinAxisGraphicR());
         leftShoulderRotator.setLink(servoPinAxisGraphicL());
         rightShoulderFlapper.setLink(testSphereArmThighR());
@@ -258,7 +257,6 @@ public class ArmRobot extends Robot
         rootJoint.setLink(coreGraphic());
         this.addRootJoint(rootJoint);
 
-        //ground contact modeling bit  no contacts for just links?
         //each new contact point needs a new GroundContactPoint as below
         GroundContactPoint groundContactPointRSR = new GroundContactPoint("rightShoulderRotator", this);
         //and it will also need to be attached to a joint or link as below
@@ -330,7 +328,7 @@ public class ArmRobot extends Robot
         GroundContactPoint groundContactPointL6 = new GroundContactPoint("l6", this);
         l6.addGroundContactPoint(groundContactPointL6);
 
-        //leave this bit alone!
+        //This creates a flat surface for JD to stand on
         GroundContactModel groundModel = new LinearGroundContactModel(this, 1422, 150.6, 50.0, 1000.0,
                 this.getRobotsYoVariableRegistry());
         GroundProfile3D profile = new FlatGroundProfile();
@@ -342,14 +340,6 @@ public class ArmRobot extends Robot
      * Fulcrum's angular position in radians
      * @return angular position in radians
      */
-//    public double getFulcrumAngularPosition()
-//    {
-//        return q_fulcrum.getDoubleValue();
-//    }
-//    public double getSecondAngularPosition()
-//    {
-//        return q_Second.getDoubleValue();
-//    }
 
     public double getLRotatorAngularPosition() { return q_LRotator.getDoubleValue(); }
     public double getRRotatorAngularPosition() { return q_RRotator.getDoubleValue(); }
@@ -388,23 +378,11 @@ public class ArmRobot extends Robot
         return q_RAnkle.getDoubleValue();
     }
 
-    /*public double getSecondAngularPosition()
-    {
-        return q_Second.getDoubleValue();
-    }*/
 
     /**
      * Fulcrum's angular velocity in radians per seconds
      * @return angular velocity in radians per seconds
      */
-//    public double getFulcrumAngularVelocity()
-//    {
-//        return qd_fulcrum.getDoubleValue();
-//    }
-//    public double getSecondAngularVelocity()
-//    {
-//        return qd_Second.getDoubleValue();
-//    }
 
     public double getLRotatorAngularVelocity() { return qd_LRotator.getDoubleValue(); }
     public double getRRotatorAngularVelocity() { return qd_RRotator.getDoubleValue(); }
@@ -446,20 +424,10 @@ public class ArmRobot extends Robot
      * Fulcrum's torque in Newton meter
      * @return Torque in Newton meter
      */
-    //public double getFulcrumTorque() { return tau_fulcrum.getDoubleValue(); }
-    //if something breaks, try uncommenting this
     /**
      * Set Fulcrum's torque in Newton meter
      * @return Torque in Newton meter
      */
-//    public void setFulcrumTorque(double tau)
-//    {
-//        this.tau_fulcrum.set(tau);
-//    }
-//    public void setSecondTorque(double tau)
-//    {
-//        this.tau_Second.set(tau);
-//    }
 
     public void setLRotatorTorque(double tau)
     {
@@ -507,14 +475,9 @@ public class ArmRobot extends Robot
         this.tau_RAnkle.set(tau);
     }
 
+    //many many graphics methods
 
-
-
-
-    //graphics bits are self-documenting :D
-    //no they're not D:
-    //individual methods for everything AAAAHHHH!!!
-
+    //used for the shoulder rotators, which are not visible
     private Link servoPinAxisGraphicL()
     {
         Link servo = new Link("servoPin");
@@ -547,6 +510,8 @@ public class ArmRobot extends Robot
         return servo;
     }
 
+    //this is the graphic stuff for the body and head, which is all attached to the root joint, and JD's head is indeed
+    //fake. It's just a graphic
     private Link coreGraphic()
     {
         Link body = new Link("body");
@@ -614,6 +579,7 @@ public class ArmRobot extends Robot
         return servo;
     }
 
+    //we only needed one of these because the legs were similar enough
     private Link testSphereLeg()
     {
         Link servo = new Link("servoPin");
@@ -664,6 +630,7 @@ public class ArmRobot extends Robot
         return servo;
     }
 
+    //these are the upper arms. We are... bad at names
     private Link testSphereArmThighL()
     {
         Link servo = new Link("servoPin");
@@ -751,11 +718,13 @@ public class ArmRobot extends Robot
         return servo;
     }
 
+    //these are invisible joints to create contact points all around the feet. Uncomment the section within to see
+    //where they actually are.
     private Link footsies()
     {
         Link servo = new Link("servoPin");
         servo.setMomentOfInertia(FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X, FULCRUM_MOMENT_OF_INERTIA_ABOUT_X);
-        servo.setMass(1);
+        servo.setMass(.1);
 
 //        Graphics3DObject servoHeadGraphics = new Graphics3DObject();
 //
