@@ -1,4 +1,4 @@
-package us.ihmc.exampleSimulations.JD;
+package us.ihmc.roboPotatoCat;
 
 import us.ihmc.graphics3DAdapter.GroundProfile3D;
 import us.ihmc.graphics3DAdapter.graphics.Graphics3DObject;
