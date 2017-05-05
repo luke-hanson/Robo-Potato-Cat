@@ -36,22 +36,8 @@ public class ArmController implements RobotController
     private DoubleYoVariable iLCrouchKnee;
     private DoubleYoVariable iRCrouchKnee;
 
+
     private double theNumberWeAreCountingUpTo = 5000;
-
-//    private DoubleYoVariable p_LRot, d_LRot, i_LRot;
-//    private DoubleYoVariable p_RRot, d_RRot, i_RRot;
-//    private DoubleYoVariable p_LFlap, d_LFlap, i_LFlap;
-//    private DoubleYoVariable p_RFlap, d_RFlap, i_RFlap;
-//    private DoubleYoVariable p_LBow, d_LBow, i_LBow;
-//    private DoubleYoVariable p_RBow, d_RBow, i_RBow;
-//    private DoubleYoVariable p_LHip, d_LHip, i_LHip;
-//    private DoubleYoVariable p_RHip, d_RHip, i_RHip;
-//    private DoubleYoVariable p_LKnee, d_LKnee, i_LKnee;
-//    private DoubleYoVariable p_RKnee, d_RKnee, i_RKnee;
-//    private DoubleYoVariable p_LAnk, d_LAnk, i_LAnk;
-//    private DoubleYoVariable p_RAnk, d_RAnk, i_RAnk;
-
-
 
     // This is the desired torque that we will apply to the fulcrum joint (PinJoint)
     private double torque;
@@ -72,6 +58,7 @@ public class ArmController implements RobotController
         i_gain = new DoubleYoVariable("IntegralGain", registry);
         i_gain.set(10.0);
 
+        //we created these so you can control JD during simulation
         RRotUp = new IntegerYoVariable("RRotUp", registry);
         RRotUp.set(0);
         LRotUp = new IntegerYoVariable("LRotUp", registry);
@@ -97,6 +84,7 @@ public class ArmController implements RobotController
     private double positionError = 0;
     private double integralError = 0;
 
+    //doControl() the all-powerful
     public void doControl()
     {
         LRotatorController();
@@ -113,6 +101,7 @@ public class ArmController implements RobotController
         RAnkleController();
     }
 
+    //these are the shoulder rotator joints
     public void LRotatorController()
     {
         // ERROR term: Compute the difference between the desired position the pendulum and its current position
@@ -156,6 +145,8 @@ public class ArmController implements RobotController
 
         robot.setRRotatorTorque(torque);
     }
+
+    //the second joints on the shoulders, used to simulate a ball joint
     public void LFlapperController()
     {
         // ERROR term: Compute the difference between the desired position the pendulum and its current position
@@ -186,6 +177,8 @@ public class ArmController implements RobotController
 
         robot.setRFlapperTorque(torque);
     }
+
+
     public void LElbowController()
     {
         // ERROR term: Compute the difference between the desired position the pendulum and its current position
@@ -266,6 +259,8 @@ public class ArmController implements RobotController
 
         robot.setRElbowTorque(torque);
     }
+
+
     public void LHipController()
     {
         // ERROR term: Compute the difference between the desired position the pendulum and its current position
@@ -329,6 +324,8 @@ public class ArmController implements RobotController
 
         robot.setRHipTorque(torque);
     }
+
+
     public void LKneeController()
     {
         // ERROR term: Compute the difference between the desired position the pendulum and its current position
@@ -393,6 +390,8 @@ public class ArmController implements RobotController
 
         robot.setRKneeTorque(torque);
     }
+
+
     public void LAnkleController()
     {
         // ERROR term: Compute the difference between the desired position the pendulum and its current position
